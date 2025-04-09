@@ -26,7 +26,7 @@
 已在ComfyUI Desktop版完成测试——运行比强迫症对齐的网格还要丝滑。祝各位像素对齐愉快！
 
 ### 若本插件成功守护了您的理智：
-  ⭐ [请来颗星星（用于维持咖啡因依赖）](https://github.com/Moooonet/ComfyUI-Align)
+  ⭐ 请来颗星星（用于维持咖啡因依赖）
   
   👀 [B站关注我](https://space.bilibili.com/3546578992236984)
 

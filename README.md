@@ -26,7 +26,7 @@ That's why this plugin's color management only changes the title bar background 
 Tested on ComfyUI Desktop - works smoother than a compulsively aligned grid. Happy pixel-perfecting!
 
 ### If this plugin helps preserve your sanity:
-  ⭐ [Drop a star (to sustain my caffeine dependency)](https://github.com/Moooonet/ComfyUI-Align)
+  ⭐ Drop a star (to sustain my caffeine dependency)
   
   👀 [Follow me on Bilibili](https://space.bilibili.com/3546578992236984)
 
