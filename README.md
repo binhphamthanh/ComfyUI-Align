@@ -23,12 +23,17 @@ When using ComfyUI's native color feature, I noticed it dyes both the node's tit
 
 That's why this plugin's color management only changes the title bar background - making different nodes instantly distinguishable while maintaining workflow cleanliness. This design was inspired by Blender's approach.
 
+<div align="left">
+  <p>
+    <span>Video：</span>
+    <a href="https://youtu.be/gQdG9p6dWg4">Youtube</a> |
+    <a href="https://www.bilibili.com/video/BV1brdWYbEGE">BiliBili</a> 
+  </p>
+</div>
+
 Tested on ComfyUI Desktop - works smoother than a compulsively aligned grid. Happy pixel-perfecting!
 
-### If this plugin helps preserve your sanity:
-  ⭐ Drop a star (to sustain my caffeine dependency)
-  
-  👀 [Follow me on Bilibili](https://space.bilibili.com/3546578992236984)
+> *If this plugin helps preserve your sanity:  Drop a ⭐ please(to sustain my caffeine dependency)*
 
 
 ## Features
