@@ -31,7 +31,9 @@ const DEFAULT_CONFIG = {
     'moon': 'moon'
   },
   transition: 'all 0.2s ease',
-  shortcut: 'alt+a'
+  shortcut: 'alt+a',
+  applyToHeader: true,
+  applyToPanel: false
 };
 
 const AlignerPlugin = (() => {
@@ -1206,7 +1208,17 @@ const AlignerPlugin = (() => {
           color = CONFIG.colors[colorKey];
           
           selectedNodes.forEach(node => {
-            node.color = color;
+            if (CONFIG.applyToHeader && CONFIG.applyToPanel) {
+              node.color = utils.getDeeperColor(color);
+              node.bgcolor = color;
+            } else {
+              if (CONFIG.applyToHeader) {
+                node.color = color;
+              }
+              if (CONFIG.applyToPanel) {
+                node.bgcolor = color;
+              }
+            }
           });
           
           selectedGroups.forEach(group => {
@@ -1358,10 +1370,11 @@ app.registerExtension({
       defaultValue: DEFAULT_CONFIG.horizontalMinSpacing,
       attrs: {
         min: 10,
-        max: 100,
+        max: 200,
         step: 1
       },
       tooltip: "Minimum horizontal spacing between nodes when aligning (in pixels)",
+      category: ["Align", "Spacing", "Horizontal"],
       onChange: (value) => {
         if (AlignerPlugin && AlignerPlugin.CONFIG) {
           AlignerPlugin.CONFIG.horizontalMinSpacing = value;
@@ -1375,10 +1388,11 @@ app.registerExtension({
       defaultValue: DEFAULT_CONFIG.verticalMinSpacing,
       attrs: {
         min: 10,
-        max: 100,
+        max: 200,
         step: 1
       },
       tooltip: "Minimum vertical spacing between nodes when aligning (in pixels)",
+      category: ["Align", "Spacing", "Vertical"],
       onChange: (value) => {
         if (AlignerPlugin && AlignerPlugin.CONFIG) {
           AlignerPlugin.CONFIG.verticalMinSpacing = value;
@@ -1391,12 +1405,45 @@ app.registerExtension({
       type: "text",
       defaultValue: DEFAULT_CONFIG.shortcut,
       tooltip: "Shortcut to open the alignment tool (e.g. 'alt+a', 'shift+s', etc.)",
+      category: ["Align", "General"],
       onChange: (value) => {
         if (AlignerPlugin && AlignerPlugin.CONFIG) {
           AlignerPlugin.CONFIG.shortcut = value;
         }
       }
-    }
+    },
+  ]
+});
+
+app.registerExtension({
+  name: "ComfyUI-Align.ColorSettings",
+  settings: [
+    {
+      id: "Align.Color.applyToPanel",
+      name: "Apply color to node panel (background)",
+      type: "boolean",
+      defaultValue: DEFAULT_CONFIG.applyToPanel,
+      tooltip: "When checked, colors will be applied to node panels (background area)",
+      category: ["Align", "Color Application", "Panel"],
+      onChange: (value) => {
+        if (AlignerPlugin && AlignerPlugin.CONFIG) {
+          AlignerPlugin.CONFIG.applyToPanel = value;
+        }
+      }
+    },
+    {
+      id: "Align.Color.applyToHeader",
+      name: "Apply color to node header",
+      type: "boolean",
+      defaultValue: DEFAULT_CONFIG.applyToHeader,
+      tooltip: "When checked, colors will be applied to node headers",
+      category: ["Align", "Color Application", "Header"],
+      onChange: (value) => {
+        if (AlignerPlugin && AlignerPlugin.CONFIG) {
+          AlignerPlugin.CONFIG.applyToHeader = value;
+        }
+      }
+    },
   ]
 });
 
@@ -1406,8 +1453,22 @@ app.registerExtension({
     await app.extensionManager.setting.set("Align.Spacing.horizontalMin", DEFAULT_CONFIG.horizontalMinSpacing);
     await app.extensionManager.setting.set("Align.Spacing.verticalMin", DEFAULT_CONFIG.verticalMinSpacing);
 
-    AlignerPlugin.CONFIG.horizontalMinSpacing = DEFAULT_CONFIG.horizontalMinSpacing;
-    AlignerPlugin.CONFIG.verticalMinSpacing = DEFAULT_CONFIG.verticalMinSpacing;
+    const panelSetting = app.extensionManager.setting.get("Align.Color.applyToPanel");
+    if (panelSetting === undefined) {
+      await app.extensionManager.setting.set("Align.Color.applyToPanel", DEFAULT_CONFIG.applyToPanel);
+    } else {
+      AlignerPlugin.CONFIG.applyToPanel = panelSetting;
+    }
+    
+    const headerSetting = app.extensionManager.setting.get("Align.Color.applyToHeader");
+    if (headerSetting === undefined) {
+      await app.extensionManager.setting.set("Align.Color.applyToHeader", DEFAULT_CONFIG.applyToHeader);
+    } else {
+      AlignerPlugin.CONFIG.applyToHeader = headerSetting;
+    }
+
+    AlignerPlugin.CONFIG.horizontalMinSpacing = app.extensionManager.setting.get("Align.Spacing.horizontalMin") || DEFAULT_CONFIG.horizontalMinSpacing;
+    AlignerPlugin.CONFIG.verticalMinSpacing = app.extensionManager.setting.get("Align.Spacing.verticalMin") || DEFAULT_CONFIG.verticalMinSpacing;
 
     const shortcutSetting = app.extensionManager.setting.get("Align.Shortcut");
     if (shortcutSetting !== undefined) {
