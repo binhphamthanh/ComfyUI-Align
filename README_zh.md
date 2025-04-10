@@ -100,7 +100,7 @@
 
 如果您想修改快捷键以及垂直最小间距(Vertical Min Spacing)和水平最小间距配置(Horizontal Min Spacing)，可以在设置面板的Align中进行修改。
 <div align="center">
-  <img src="https://moooonet.github.io/assets/Comfy-Align/images/settings.png" width="100%">
+  <img src="https://moooonet.github.io/assets/Comfy-Align/images/setting.png" width="100%">
 </div>
 
 

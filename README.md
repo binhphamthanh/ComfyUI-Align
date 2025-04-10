@@ -99,7 +99,7 @@ Color modification supports node and groups. The plugin includes predefined colo
 
 If you want to modify the shortcut keys as well as the Vertical Min Spacing and Horizontal Min Spacing configurations, you can make the changes in the Align section of the settings panel.
 <div align="center">
-  <img src="https://moooonet.github.io/assets/Comfy-Align/images/settings.png" width="100%">
+  <img src="https://moooonet.github.io/assets/Comfy-Align/images/setting.png" width="100%">
 </div>
 
 
