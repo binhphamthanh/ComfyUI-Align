@@ -1,5 +1,5 @@
 <div align="center">
-<img src="https://moooonet.github.io/assets/Comfy-Align//images/Comfy-Align.png" width="100%">
+<img src="https://moooonet.github.io/assets/Comfy-Align//images/alignNodes.jpg" width="100%">
 <br><br>
 
 [![English](https://img.shields.io/badge/Languages-English-blue)](README.md)
@@ -21,7 +21,10 @@ When using ComfyUI's native color feature, I noticed it dyes both the node's tit
 - Legibility problems where node titles or panel parameters become hard to read (especially with high-brightness or over-saturated colors)
 - Ugly visual dissonance between parameter backgrounds and panel colors, creating aesthetically unbearable nodes
 
-That's why this plugin's color management only changes the title bar background - making different nodes instantly distinguishable while maintaining workflow cleanliness. This design was inspired by Blender's approach.
+That's why this plugin's color management by default only changes the title bar background - making different nodes instantly distinguishable while maintaining workflow cleanliness. This design was inspired by Blender's approach.
+However, you can still configure how colors are applied in the settings:
+- **Apply color to node panel (background)** 
+- **Apply color to node header** - (enabled by default)
 
 <div align="left">
   <p>
@@ -41,6 +44,7 @@ Tested on ComfyUI Desktop - works smoother than a compulsively aligned grid. Hap
 - **Node Alignment** - Align nodes to left, right, top, bottom, horizontal equidistant distribution, vertical equidistant distribution
 - **Node Stretching** - Stretch nodes to match dimensions or align to edges
 - **Color Management** - Apply predefined colors to nodes and groups or use custom colors
+- **Node Operations** - Toggle node bypass mode, mute mode, or pin nodes in place
 - **Intuitive UI** - Radial menu activated with Alt+A
 
 ## Installation
@@ -67,8 +71,8 @@ Tested on ComfyUI Desktop - works smoother than a compulsively aligned grid. Hap
 - **Right Alignment** - Aligns all selected nodes to the rightmost edge
 - **Top Alignment** - Aligns all selected nodes to the top edge
 - **Bottom Alignment** - Aligns all selected nodes to the bottom edge
-- **Horizontal Equal Spacing & Left Alignment** - Distribute nodes with equal horizontal spacing and left-align them to the leftmost node
-- **Vertical Equal Spacing & Top Alignment** - Distribute nodes with equal vertical spacing and top-align them to the topmost node
+- **Horizontal Distribution** - Evenly space nodes horizontally: defaults to starting from leftmost node, hold Alt to start from rightmost node
+- **Vertical Distribution** - Evenly space nodes vertically: defaults to starting from topmost node, hold Alt to start from bottommost node
 
 ### Node Stretching
 
@@ -76,8 +80,8 @@ Tested on ComfyUI Desktop - works smoother than a compulsively aligned grid. Hap
 - **Right Stretch** - Stretches nodes to the right edge. If already right-aligned, equalizes widths by adjusting the left side
 - **Top Stretch** - Stretches nodes to the top edge. If already top-aligned, equalizes heights by adjusting the bottom side
 - **Bottom Stretch** - Stretches nodes to the bottom edge. If already bottom-aligned, equalizes heights by adjusting the top side
-- **Horizontal Stretch** - Makes all nodes the same width as the widest node
-- **Vertical Stretch** - Makes all nodes the same height as the tallest node
+- **Horizontal Stretch** - Adjust all nodes to the same width: defaults to using the widest node's width, hold Alt to use the narrowest node's width
+- **Vertical Stretch** - Adjust all nodes to the same height: defaults to using the tallest node's height, hold Alt to use the shortest node's height
 
 ### Color Management
 
@@ -95,9 +99,23 @@ Color modification supports node and groups. The plugin includes predefined colo
 | ♟️ | - | Chessboard (removes color) |
 | 🌙 | - | Moon (for custom colors) |
 
+### Node Operations
+
+- **Node Bypass** - Toggle bypass mode to allow inputs to pass directly to outputs without processing node content
+- **Node Mute** - Toggle mute mode to temporarily disable node execution
+- **Node Pin** - Pin nodes in place to prevent them from being moved by alignment and stretching operations
+
+### Advanced Operation Tips
+
+- **Shift Key Panel Retention** - Hold Shift when clicking operation icons to keep the radial panel visible for consecutive operations
+- **Alt Key Modifier** - Hold Alt when performing horizontal/vertical distribution to change alignment direction and reference point
+- **Pinned Node Safety** - Alignment and stretching operations automatically skip pinned nodes
+- **Utility Panel** - Expand/collapse the utility tool panel using the arrow icon next to the moon
+
 ## Configuration
 
 If you want to modify the shortcut keys as well as the Vertical Min Spacing and Horizontal Min Spacing configurations, you can make the changes in the Align section of the settings panel.
+
 <div align="center">
   <img src="https://moooonet.github.io/assets/Comfy-Align/images/setting.png" width="100%">
 </div>

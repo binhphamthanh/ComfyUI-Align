@@ -1,5 +1,5 @@
 <div align="center">
-<img src="https://moooonet.github.io/assets/Comfy-Align/images/Comfy-Align.png" width="100%">
+<img src="https://moooonet.github.io/assets/Comfy-Align/images/alignNodes.jpg" width="100%">
 <br><br>
 
 [![English](https://img.shields.io/badge/Languages-English-blue)](README.md)
@@ -21,7 +21,11 @@
 - 可读性问题，使节点标题或面板参数难以阅读（尤其是高亮度或过饱和的颜色）
 - 参数背景和面板颜色之间的丑陋视觉不协调，创造出美学上难以忍受的节点
 
-这就是为什么本插件的颜色管理只改变标题栏背景 - 使不同节点立即可区分，同时保持工作流的整洁。这一设计灵感来自Blender的节点。
+这就是为什么本插件的颜色管理默认只改变标题栏背景 - 使不同节点立即可区分，同时保持工作流的整洁。这一设计灵感来自Blender的节点。
+但是，您仍然还可以在设置中配置颜色应用方式：
+- **Apply color to node panel (background)** - 对节点面板（背景区域）应用颜色
+- **Apply color to node header** - 对节点标题栏应用颜色（默认勾选）
+
 <div align="left">
   <p>
     <span>视频：</span>
@@ -40,6 +44,7 @@
 - **节点对齐** - 将节点对齐到左侧、右侧、顶部、底部，水平等距分布、垂直等距分布
 - **节点拉伸** - 拉伸节点以匹配尺寸或对齐到边缘
 - **颜色管理** - 对节点和组应用预定义颜色或使用自定义颜色
+- **节点操作** - 切换节点的绕过模式、静音模式或固定节点位置
 - **直观的UI** - 通过Alt+A激活的十字径向面板
 
 ## 安装
@@ -66,8 +71,10 @@
 - **右对齐** - 将所有选定节点对齐到最右边缘
 - **顶部对齐** - 将所有选定节点对齐到顶部边缘
 - **底部对齐** - 将所有选定节点对齐到底部边缘
-- **水平等距左对齐** - 沿水平轴等间距分布节点，并以最左侧节点为基准左对齐
-- **垂直等距顶对齐** - 沿垂直轴等间距分布节点，并以最顶部节点为基准顶对齐
+- **水平等距左对齐** - 沿水平轴等间距分布节点，并以最左侧节点为基准左对齐；按住Alt键点击该图标则以最右侧节点为基准对齐。
+- **垂直等距顶对齐** - 沿垂直轴等间距分布节点，并以最顶部节点为基准顶对齐；按住Alt键点击该图标则以最底部节点为基准底对齐。
+- **水平等距分布** - 在左右方向上均匀排列节点：默认以最左侧节点为起点，按住Alt键则以最右侧节点为起点
+- **垂直等距分布** - 在上下方向上均匀排列节点：默认以最顶部节点为起点，按住Alt键则以最底部节点为起点
 
 ### 节点拉伸
 
@@ -75,8 +82,8 @@
 - **右拉伸** - 将节点拉伸到右边缘。如果已经右对齐，则调整左侧使宽度相等
 - **顶部拉伸** - 将节点拉伸到顶部边缘。如果已经顶部对齐，则调整底部使高度相等
 - **底部拉伸** - 将节点拉伸到底部边缘。如果已经底部对齐，则调整顶部使高度相等
-- **水平拉伸** - 使所有节点与最宽节点的宽度相同
-- **垂直拉伸** - 使所有节点与最高节点的高度相同
+- **水平拉伸** - 将所有节点调整为相同宽度：默认使用最宽节点的宽度，按住Alt键则使用最窄节点的宽度
+- **垂直拉伸** - 将所有节点调整为相同高度：默认使用最高节点的高度，按住Alt键则使用最矮节点的高度
 
 ### 颜色管理
 
@@ -94,11 +101,24 @@
 | ♟️ | - | 棋盘格（移除颜色） |
 | 🌙 | - | 月亮（用于自定义颜色） |
 
+### 节点操作
 
+- **节点绕过** - 切换节点的绕过模式，允许输入直接传递到输出而不处理节点内容
+- **节点静音** - 切换节点的静音模式，暂时禁用节点执行
+- **节点固定** - 固定节点位置，防止节点被对齐和拉伸操作移动
+
+### 高级操作技巧
+
+- **Shift键保持面板** - 按住Shift键时点击操作图标，可以保持十字面板显示，方便连续进行多项对齐或颜色操作
+- **Alt键修改器** - 按住Alt键时执行水平/垂直等距分布会改变对齐方向和参考点
+- **固定节点安全性** - 对齐和拉伸操作会自动跳过被固定的节点
+- **实用工具面板** - 通过月亮旁边的箭头图标可以展开/折叠实用工具面板
 
 ## 配置
 
 如果您想修改快捷键以及垂直最小间距(Vertical Min Spacing)和水平最小间距配置(Horizontal Min Spacing)，可以在设置面板的Align中进行修改。
+
+
 <div align="center">
   <img src="https://moooonet.github.io/assets/Comfy-Align/images/setting.png" width="100%">
 </div>
@@ -128,6 +148,6 @@ const CONFIG = {
   <br>
   <p><strong><i>赠人玫瑰，手留余香</i></strong></p>
   <p>每一份支持都将直接转化为开源世界的进步，这些来自社区的温暖，既是对技术价值的认可，更构成了开源生态持续运转的底层燃料。</p>
-  <a href='https://ko-fi.com/M4M21CRQOT' target='_blank'><img height='32' style='border:0px;height:32px;' src='https://storage.ko-fi.com/cdn/kofi6.png?v=6' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
+  <a href='https://ko-fi.com/M4M21CRQOTOT' target='_blank'><img height='32' style='border:0px;height:32px;' src='https://storage.ko-fi.com/cdn/kofi6.png?v=6' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
   <a href='https://afdian.com/a/moooonet' target='_blank'><img height='32' style='border:0px;height:32px;' src='https://moooonet.github.io/assets/Comfy-Align/images/afdian.png' border='0' alt='AFDIAN' /></a>
 </div>
