@@ -18,7 +18,7 @@ const DEFAULT_CONFIG = {
     circle6: '#246283',     // Blue
     circle7: '#3c3c83',     // Purple
     circle8: '#ffffff',     // White (clear)
-    circle9: '#ffd700',     // Gold (rainbow/color picker)
+    circle9: '#ffd700',     // Moon (custom color)
     circle10: '#ff00ff',    // Magenta (bypass)
     icon: 'rgba(198, 198, 198, 0.8)', // Icon color
     bg: 'rgba(12, 12, 12, 0.95)',     // Background color
@@ -34,7 +34,7 @@ const DEFAULT_CONFIG = {
     'blue': 'circle6',
     'purple': 'circle7',
     'clear': 'circle8',
-    'rainbow': 'circle9',
+    'moon': 'circle9',
     'bypass': 'circle10'
   },
   transition: 'all 0.2s ease',
@@ -133,7 +133,7 @@ const AlignerPlugin = (() => {
     { id: 'cyanCircle', type: 'color' },
     { id: 'blueCircle', type: 'color' },
     { id: 'purpleCircle', type: 'color' },
-    { id: 'rainbowCircle', type: 'color' },
+    { id: 'moonCircle', type: 'color' },
     { id: 'clearCircle', type: 'color' },
     { id: 'toggleArrowCircle', type: 'toggle' },
     { id: 'bypassCircle', type: 'bypass' },
@@ -497,7 +497,7 @@ const AlignerPlugin = (() => {
       const bg = this.createElement('div', 'aligner-icon-bg');
 
       if (isCircle) {
-        if (id === 'rainbowCircle') {
+        if (id === 'moonCircle') {
             bg.style.background = 'transparent';
             
             // Create crescent moon icon
@@ -1106,7 +1106,7 @@ const AlignerPlugin = (() => {
         case 'toggleArrowCircle':
           dom.toggleUtilIcons();
           return;
-        case 'rainbowCircle':
+        case 'moonCircle':
           this.openNativeColorPicker();
           return;
         default:
@@ -1377,56 +1377,58 @@ const AlignerPlugin = (() => {
       }
     },
 
-    performNodeOperation(operationFn, requireMultipleNodes = true) {
+    // Main function to execute node operations safely with proper error handling
+    // Handles node selection, pinned node filtering, and validation before running the operation
+    // Parameters:
+    //   - operationType: String identifying the type of operation ("alignment" or "resizing")
+    //   - operationFn: Function that performs the actual operation on the nodes
+    // Returns an object with success status and error message if applicable
+    executeNodeOperation(operationType, operationFn) {
       try {
         const appInstance = this.getComfyUIAppInstance();
         if (!appInstance) {
-          return { success: false, message: "Failed to get ComfyUI application instance" };
+          return { success: false, message: "Unable to get ComfyUI application instance" };
         }
 
-        const selectedNodes = this.getSelectedNonPinnedNodes(appInstance);
-        if (requireMultipleNodes && selectedNodes.length <= 1) {
-          return { success: false, message: "Cannot perform operation. Some nodes are pinned and cannot be moved or resized" };
-        }
-
-        if (selectedNodes.length > 100) {
-          console.warn(`Processing ${selectedNodes.length} nodes, this may take a moment...`);
-        }
-        
-        window.requestAnimationFrame(() => {
-          operationFn(selectedNodes);
-          appInstance.graph.setDirtyCanvas(true, true);
-        });
-        
-        return { success: true };
-      } catch (error) {
-        console.error("Operation failed:", error);
-        return { success: false, message: `Operation failed: ${error.message}` };
-      }
-    },
-
-    performColorOperation(operationFn) {
-      try {
-        const appInstance = this.getComfyUIAppInstance();
-        if (!appInstance) {
-          return { success: false, message: "Failed to get ComfyUI application instance" };
-        }
-
+        // Get selected nodes and filter out pinned nodes that cannot be modified
         const selectedNodes = this.getSelectedNodes(appInstance);
-        const selectedGroups = this.getSelectedGroups(appInstance);
+        const pinnedNodes = selectedNodes.filter(node => node.flags?.pinned);
+        const nonPinnedNodes = selectedNodes.filter(node => !(node.flags?.pinned));
         
-        if (selectedNodes.length === 0 && selectedGroups.length === 0) {
-          return { success: false, message: "Please select nodes or groups to apply color" };
+        // Validate that we have enough non-pinned nodes to perform the operation
+        if (nonPinnedNodes.length <= 1) {
+          let errorMessage = "Cannot perform operation.";
+          
+          if (pinnedNodes.length > 0) {
+            if (operationType === "alignment") {
+              errorMessage = "Cannot perform alignment. Some nodes are pinned and cannot be moved.";
+            } else if (operationType === "resizing") {
+              errorMessage = "Cannot perform resizing. Some nodes are pinned and cannot be resized.";
+            } else {
+              errorMessage = "Cannot perform operation. Some nodes are pinned and cannot be moved or resized.";
+            }
+          } else {
+            errorMessage = "At least two nodes must be selected.";
+          }
+          
+          return { success: false, message: errorMessage };
         }
 
-        operationFn(selectedNodes, selectedGroups);
+        // Execute the operation and update the canvas
+        operationFn(nonPinnedNodes);
         appInstance.graph.setDirtyCanvas(true, true);
         
         return { success: true };
       } catch (error) {
-        console.error("Color operation failed:", error);
+        console.error(`Operation failed:`, error);
         return { success: false, message: `Operation failed: ${error.message}` };
       }
+    },
+
+    // Get selected non-pinned nodes
+    getSelectedNonPinnedNodes(appInstance) {
+      const selectedNodes = this.getSelectedNodes(appInstance);
+      return selectedNodes.filter(node => !(node.flags?.pinned));
     },
 
     alignNodesToHorizontalCenterInternal(nodes) {
@@ -1646,60 +1648,6 @@ const AlignerPlugin = (() => {
         return { success: false, message: `Operation failed: ${error.message}` };
       }
     },
-
-    // Get selected non-pinned nodes
-    getSelectedNonPinnedNodes(appInstance) {
-      const selectedNodes = this.getSelectedNodes(appInstance);
-      return selectedNodes.filter(node => !(node.flags?.pinned));
-    },
-
-    // Main function to execute node operations safely with proper error handling
-    // Handles node selection, pinned node filtering, and validation before running the operation
-    // Parameters:
-    //   - operationType: String identifying the type of operation ("alignment" or "resizing")
-    //   - operationFn: Function that performs the actual operation on the nodes
-    // Returns an object with success status and error message if applicable
-    executeNodeOperation(operationType, operationFn) {
-      try {
-        const appInstance = this.getComfyUIAppInstance();
-        if (!appInstance) {
-          return { success: false, message: "Unable to get ComfyUI application instance" };
-        }
-
-        // Get selected nodes and filter out pinned nodes that cannot be modified
-        const selectedNodes = this.getSelectedNodes(appInstance);
-        const pinnedNodes = selectedNodes.filter(node => node.flags?.pinned);
-        const nonPinnedNodes = selectedNodes.filter(node => !(node.flags?.pinned));
-        
-        // Validate that we have enough non-pinned nodes to perform the operation
-        if (nonPinnedNodes.length <= 1) {
-          let errorMessage = "Cannot perform operation.";
-          
-          if (pinnedNodes.length > 0) {
-            if (operationType === "alignment") {
-              errorMessage = "Cannot perform alignment. Some nodes are pinned and cannot be moved.";
-            } else if (operationType === "resizing") {
-              errorMessage = "Cannot perform resizing. Some nodes are pinned and cannot be resized.";
-            } else {
-              errorMessage = "Cannot perform operation. Some nodes are pinned and cannot be moved or resized.";
-            }
-          } else {
-            errorMessage = "At least two nodes must be selected.";
-          }
-          
-          return { success: false, message: errorMessage };
-        }
-
-        // Execute the operation and update the canvas
-        operationFn(nonPinnedNodes);
-        appInstance.graph.setDirtyCanvas(true, true);
-        
-        return { success: true };
-      } catch (error) {
-        console.error(`Operation failed:`, error);
-        return { success: false, message: `Operation failed: ${error.message}` };
-      }
-    }
   };
 
   const events = {
@@ -1842,7 +1790,7 @@ const AlignerPlugin = (() => {
     },
 
     handleOutsideClick(e) {
-      if (state.visible && state.container && !state.container.contains(e.target)) {
+      if (state.visible && state.container && !state.container.contains(e.target) && !state.shiftKeyPressed) {
         actions.toggle();
       }
     },
@@ -1875,14 +1823,6 @@ const AlignerPlugin = (() => {
 
   return {
     init() {
-      CONFIG.horizontalMinSpacing = DEFAULT_CONFIG.horizontalMinSpacing;
-      CONFIG.verticalMinSpacing = DEFAULT_CONFIG.verticalMinSpacing;
-
-      const shortcutSetting = app.extensionManager.setting.get("Align.Shortcut");
-      if (shortcutSetting !== undefined) {
-        CONFIG.shortcut = shortcutSetting;
-      }
-      
       events.registerEventListeners();
     },
     destroy() {
@@ -1898,7 +1838,7 @@ const AlignerPlugin = (() => {
 })();
 
 app.registerExtension({
-  name: "ComfyUI-Align.Settings",
+  name: "ComfyUI-Align",
   settings: [
     {
       id: "Align.Spacing.horizontalMin",
@@ -1949,12 +1889,6 @@ app.registerExtension({
         }
       }
     },
-  ]
-});
-
-app.registerExtension({
-  name: "ComfyUI-Align.ColorSettings",
-  settings: [
     {
       id: "Align.Color.applyToPanel",
       name: "Apply color to node panel (background)",
@@ -1981,11 +1915,7 @@ app.registerExtension({
         }
       }
     },
-  ]
-});
-
-app.registerExtension({
-  name: "ComfyUI-Align.SettingsUpdate",
+  ],
   async setup() {
     await app.extensionManager.setting.set("Align.Spacing.horizontalMin", DEFAULT_CONFIG.horizontalMinSpacing);
     await app.extensionManager.setting.set("Align.Spacing.verticalMin", DEFAULT_CONFIG.verticalMinSpacing);
@@ -2030,4 +1960,4 @@ function initializePlugin() {
   }
 }
 
-setTimeout(initializePlugin, 1000);
+setTimeout(initializePlugin, 1500);
