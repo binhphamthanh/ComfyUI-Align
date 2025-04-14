@@ -1,31 +1,27 @@
 import { app } from "../../../scripts/app.js";
 import { SVG_PATHS } from "./svg-paths.js";
 
-// Default configuration for the alignment tool
-// Contains settings for appearance, behavior, and layout of the UI
-// These values can be overridden by user settings through the ComfyUI settings panel
 const DEFAULT_CONFIG = {
-  iconSize: 36,             // Size of main alignment icons in pixels
-  spacing: 112,             // Spacing between icons
-  horizontalMinSpacing: 30, // Minimum horizontal spacing when aligning nodes
-  verticalMinSpacing: 25,   // Minimum vertical spacing when aligning nodes
+  iconSize: 36,
+  spacing: 112,
+  horizontalMinSpacing: 30,
+  verticalMinSpacing: 25,
   colors: {
-    circle1: '#a93232',     // Red
-    circle2: '#79461d',     // Orange
-    circle3: '#6e6e1d',     // Yellow
-    circle4: '#2b652b',     // Green
-    circle5: '#248382',     // Cyan
-    circle6: '#246283',     // Blue
-    circle7: '#3c3c83',     // Purple
-    circle8: '#ffffff',     // White (clear)
-    circle9: '#ffd700',     // Moon (custom color)
-    circle10: '#ff00ff',    // Magenta (bypass)
-    icon: 'rgba(198, 198, 198, 0.8)', // Icon color
-    bg: 'rgba(12, 12, 12, 0.95)',     // Background color
-    hover: 'rgba(255,255,255,0.2)'    // Hover highlight color
+    circle1: '#a93232',
+    circle2: '#79461d',
+    circle3: '#6e6e1d',
+    circle4: '#2b652b',
+    circle5: '#248382',
+    circle6: '#246283',
+    circle7: '#3c3c83',
+    circle8: '#ffffff',
+    circle9: '#ffd700',
+    circle10: '#ff00ff',
+    icon: 'rgba(198, 198, 198, 0.8)',
+    bg: 'rgba(12, 12, 12, 0.95)',
+    hover: 'rgba(255,255,255,0.2)'
   },
   colorMap: {
-    // Maps color name identifiers to actual color keys
     'red': 'circle1',
     'orange': 'circle2',
     'yellow': 'circle3',
@@ -52,29 +48,24 @@ const DEFAULT_CONFIG = {
 };
 
 const AlignerPlugin = (() => {
-  // Function to validate configuration and ensure all required properties exist
   const validateConfig = (config) => {
-    // Essential configuration properties
     const required = [
       'iconSize', 'spacing', 'horizontalMinSpacing', 'verticalMinSpacing', 
       'colors', 'colorMap', 'transition', 'shortcut'
     ];
-    
-    // Check for missing properties
+
     const missing = required.filter(prop => !(prop in config));
     if (missing.length > 0) {
       console.warn(`ComfyUI-Align plugin: Missing required configuration properties: ${missing.join(', ')}`);
       console.warn('Using default values for missing properties');
-      
-      // Ensure defaults are applied for missing properties
+
       missing.forEach(prop => {
         if (prop in DEFAULT_CONFIG) {
           config[prop] = DEFAULT_CONFIG[prop];
         }
       });
     }
-    
-    // Ensure proper nesting
+
     if (!config.colors) config.colors = {...DEFAULT_CONFIG.colors};
     if (!config.colorMap) config.colorMap = {...DEFAULT_CONFIG.colorMap};
     if (!config.safetyMargin) config.safetyMargin = {...DEFAULT_CONFIG.safetyMargin};
@@ -83,34 +74,30 @@ const AlignerPlugin = (() => {
     return config;
   };
 
-  // FPS target for throttled functions
   const THROTTLE_FPS = 60;
   const THROTTLE_MS = Math.floor(1000 / THROTTLE_FPS);
 
-  // Initialize configuration with validation
   const CONFIG = validateConfig({...DEFAULT_CONFIG});
-  
-  // Define node operation modes used in ComfyUI
+
   const LGraphEventMode = Object.freeze({
-    ALWAYS: 0,  // Normal operation mode
-    NEVER: 2,   // Muted/disabled mode - node won't execute
-    BYPASS: 4   // Bypass mode - inputs are passed directly to outputs
+    ALWAYS: 0,
+    NEVER: 2,
+    BYPASS: 4
   });
 
-  // Global state object to track UI state and user interactions
-  // Contains references to DOM elements, visibility flags, and interaction state
   const state = {
-    container: null,       // Main container element for the alignment UI
-    visible: false,        // Whether the alignment UI is currently visible
-    lastX: 0,              // Last known mouse X position
-    lastY: 0,              // Last known mouse Y position
-    icons: {},             // References to all icon elements
-    styleElement: null,    // Reference to injected CSS style element
-    initialized: false,    // Whether the plugin has been initialized
-    shiftKeyPressed: false, // Current state of Shift key
-    altKeyPressed: false,   // Current state of Alt key
-    isUtilsExpanded: false, // Whether the utility icons panel is expanded
-    animationFrameId: null,  // To track ongoing animations
+    container: null,
+    visible: false,
+    lastX: 0,
+    lastY: 0,
+    icons: {},
+    styleElement: null,
+    initialized: false,
+    shiftKeyPressed: false,
+    altKeyPressed: false,
+    isUtilsExpanded: false,
+    animationFrameId: null,
+    colorPickerUsed: false
   };
 
   const ICONS = [
@@ -142,8 +129,6 @@ const AlignerPlugin = (() => {
   ];
 
   const utils = {
-    // Prevents a function from being called too frequently
-    // Only executes the function after a specified delay has passed since its last invocation
     debounce(fn, delay) {
       let timer;
       return (...args) => {
@@ -152,8 +137,6 @@ const AlignerPlugin = (() => {
       };
     },
 
-    // Limits the rate at which a function can be called
-    // Ensures function is called at most once per specified time interval
     throttle(fn, limit) {
       let lastCall = 0;
       return function(...args) {
@@ -205,9 +188,6 @@ const AlignerPlugin = (() => {
       return svg;
     },
 
-    // Calculate the position of icons around a circular UI layout
-    // Each index corresponds to a specific position in a 3x4 grid layout
-    // Returns relative [x,y] coordinates for positioning the icon
     calculatePosition(index, x, y) {
       const { iconSize, spacing } = CONFIG;
       const halfSize = iconSize / 2;
@@ -216,22 +196,20 @@ const AlignerPlugin = (() => {
       if (index >= 12) {
         return null;
       }
-      
-      // Defines positions for all 12 alignment/stretch icons in a grid layout
-      // Format: [x, y] in relative coordinates from the center point
+
       const positions = [
-        [-effectiveSpacing, -halfSize - iconSize - 5],       // Left top
-        [-effectiveSpacing, -halfSize],                      // Left middle
-        [-effectiveSpacing, halfSize + 5],                   // Left bottom
-        [-halfSize - iconSize - 5, -effectiveSpacing],       // Top left
-        [-halfSize, -effectiveSpacing],                      // Top middle
-        [halfSize + 5, -effectiveSpacing],                   // Top right
-        [effectiveSpacing - iconSize, -halfSize - iconSize - 5], // Right top
-        [effectiveSpacing - iconSize, -halfSize],            // Right middle
-        [effectiveSpacing - iconSize, halfSize + 5],         // Right bottom
-        [-halfSize - iconSize - 5, effectiveSpacing - iconSize], // Bottom left
-        [-halfSize, effectiveSpacing - iconSize],            // Bottom middle
-        [halfSize + 5, effectiveSpacing - iconSize],         // Bottom right
+        [-effectiveSpacing, -halfSize - iconSize - 5],
+        [-effectiveSpacing, -halfSize],
+        [-effectiveSpacing, halfSize + 5],
+        [-halfSize - iconSize - 5, -effectiveSpacing],
+        [-halfSize, -effectiveSpacing],
+        [halfSize + 5, -effectiveSpacing],
+        [effectiveSpacing - iconSize, -halfSize - iconSize - 5],
+        [effectiveSpacing - iconSize, -halfSize],
+        [effectiveSpacing - iconSize, halfSize + 5],
+        [-halfSize - iconSize - 5, effectiveSpacing - iconSize],
+        [-halfSize, effectiveSpacing - iconSize],
+        [halfSize + 5, effectiveSpacing - iconSize],
       ];
 
       return positions[index] || [0, 0];
@@ -244,10 +222,7 @@ const AlignerPlugin = (() => {
         Math.max(margin, Math.min(y, window.innerHeight - entireHeight - margin))
       ];
     },
-    
-    // Calculate the dimensions and position of the entire UI panel
-    // Takes the center coordinates where the UI should be positioned
-    // Returns an object with width, height, and position information
+
     calculateUIBoundingBox(centerX, centerY) {
       const { iconSize, spacing } = CONFIG;
       const effectiveSpacing = spacing + iconSize / 2;
@@ -255,11 +230,9 @@ const AlignerPlugin = (() => {
       const width = effectiveSpacing * 2;
       const height = effectiveSpacing * 2;
 
-      // Add extra height for the color picker panel at the bottom
       const colorPickerHeight = 50;
       const totalHeight = height + colorPickerHeight + 15;
 
-      // Calculate top-left corner from center point
       const left = centerX - effectiveSpacing;
       const top = centerY - effectiveSpacing;
       
@@ -302,8 +275,7 @@ const AlignerPlugin = (() => {
       try {
         this.injectStyles();
         this.createContainer();
-        
-        // Load state from localStorage safely
+
         try {
           const savedState = localStorage.getItem('ComfyUI-Align.isUtilsExpanded');
           if (savedState !== null) {
@@ -311,7 +283,6 @@ const AlignerPlugin = (() => {
           }
         } catch (e) {
           console.warn("Failed to load state from localStorage", e);
-          // Continue with default state if localStorage fails
         }
         
         this.createAllIcons();
@@ -324,7 +295,6 @@ const AlignerPlugin = (() => {
         events.handleIconInteraction();
       } catch (error) {
         console.error("Failed to initialize Align plugin:", error);
-        // Attempt cleanup in case of initialization error
         this.destroy();
       }
     },
@@ -336,11 +306,9 @@ const AlignerPlugin = (() => {
       state.visible = true;
       
       actions.updateIconPositions();
-      
-      // Immediately update utility icons position to avoid floating effect
+
       this.updateUtilIconsVisibility(true);
-      
-      // Immediately set the initial rotation angle of the arrow
+
       const toggleArrow = state.container.querySelector('.toggle-arrow');
       if (toggleArrow) {
         toggleArrow.style.transform = `rotate(${state.isUtilsExpanded ? 180 : 0}deg)`;
@@ -499,13 +467,11 @@ const AlignerPlugin = (() => {
       if (isCircle) {
         if (id === 'moonCircle') {
             bg.style.background = 'transparent';
-            
-            // Create crescent moon icon
+
             const moonContainer = this.createElement('div', '', {
               style: 'position: relative; width: 100%; height: 100%; overflow: hidden; border-radius: 50%;'
             });
-            
-            // Create base circle for the moon
+
             const moonBase = this.createElement('div', '', {
               style: `
                 position: absolute;
@@ -518,8 +484,7 @@ const AlignerPlugin = (() => {
                 box-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
               `
             });
-            
-            // Create mask circle, offset to create crescent shape
+
             const moonMask = this.createElement('div', '', {
               style: `
                 position: absolute;
@@ -538,8 +503,7 @@ const AlignerPlugin = (() => {
             bg.appendChild(moonContainer);
         } else if (id === 'bypassCircle' || id === 'muteCircle' || id === 'pinCircle') {
             bg.style.background = CONFIG.colors.bg;
-            
-            // Unified creation of SVG icons
+
             const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
             svg.setAttribute('width', size * 0.8);
             svg.setAttribute('height', size * 0.8);
@@ -551,8 +515,7 @@ const AlignerPlugin = (() => {
             svg.style.zIndex = '1';
             
             const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-            
-            // Set different SVG paths based on icon type
+
             if (id === 'bypassCircle') {
               path.setAttribute('d', SVG_PATHS.byPass);
               path.style.fill = CONFIG.colors.icon;
@@ -561,15 +524,14 @@ const AlignerPlugin = (() => {
               path.style.fill = CONFIG.colors.icon;
             } else if (id === 'pinCircle') {
               path.setAttribute('d', SVG_PATHS.pin);
-              path.style.fill = '#FFFFFF'; // Set to white
+              path.style.fill = '#FFFFFF';
             }
             
             svg.appendChild(path);
             bg.appendChild(svg);
         } else if (id === 'toggleArrowCircle') {
             bg.style.background = CONFIG.colors.bg;
-            
-            // Create a wrapper container to handle positioning
+
             const svgContainer = document.createElement('div');
             svgContainer.style.position = 'absolute';
             svgContainer.style.top = '50%';
@@ -580,8 +542,7 @@ const AlignerPlugin = (() => {
             svgContainer.style.display = 'flex';
             svgContainer.style.alignItems = 'center';
             svgContainer.style.justifyContent = 'center';
-            
-            // Create arrow icon, remove positioning styles, only keep toggle-arrow class
+
             const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
             svg.setAttribute('width', size * 0.8);
             svg.setAttribute('height', size * 0.8);
@@ -600,8 +561,7 @@ const AlignerPlugin = (() => {
             const circleContainer = this.createElement('div', '', {
               style: 'position: relative; width: 100%; height: 100%; overflow: hidden; border-radius: 50%;'
             });
-            
-            // Create black background circle
+
             const circleBase = this.createElement('div', '', {
               style: `
                 position: absolute;
@@ -614,8 +574,7 @@ const AlignerPlugin = (() => {
                 box-shadow: 0 0 1px rgba(255, 255, 255, 0.2);
               `
             });
-            
-            // Use SVG path to create white icon
+
             const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
             svg.setAttribute('width', size * 0.8);
             svg.setAttribute('height', size * 0.8);
@@ -667,8 +626,6 @@ const AlignerPlugin = (() => {
           }
         }
       } else {
-        // Use mainFragment instead of directly appending to container
-        // to reduce DOM reflows
         if (mainFragment) {
           mainFragment.appendChild(iconWrapper);
         } else {
@@ -680,7 +637,6 @@ const AlignerPlugin = (() => {
     },
 
     createAllIcons() {
-      // Use DocumentFragment to batch DOM operations and reduce reflow/repaint
       const mainFragment = document.createDocumentFragment();
       const colorCirclesFragment = document.createDocumentFragment();
       const utilCirclesFragment = document.createDocumentFragment();
@@ -689,8 +645,7 @@ const AlignerPlugin = (() => {
         const icon = this.createIcon(iconInfo, index, colorCirclesFragment, utilCirclesFragment, mainFragment);
         state.icons[iconInfo.id] = icon;
       });
-      
-      // Append fragments to containers
+
       const colorCirclesContainer = state.container.querySelector('.color-circles-container');
       if (colorCirclesContainer) {
         colorCirclesContainer.appendChild(colorCirclesFragment);
@@ -700,30 +655,24 @@ const AlignerPlugin = (() => {
       if (utilCirclesContainer) {
         utilCirclesContainer.appendChild(utilCirclesFragment);
       }
-      
-      // Append non-circle icons to main container
+
       state.container.appendChild(mainFragment);
-      
-      // Initialize utility icons display state
+
       this.updateUtilIconsVisibility();
     },
-    
-    // Update utility icons container position
+
     updateUtilIconsVisibility(immediate = false) {
       const utilCirclesContainer = state.container.querySelector('.util-circles-container');
       if (utilCirclesContainer) {
-        // If immediate application is needed, temporarily remove transition effect
         if (immediate) {
           const originalTransition = utilCirclesContainer.style.transition;
           utilCirclesContainer.style.transition = 'none';
-          
-          // Apply visibility state
+
           if (state.isUtilsExpanded) {
             utilCirclesContainer.classList.remove('collapsed');
             const toggleArrow = state.container.querySelector('.toggle-arrow');
             if (toggleArrow) {
               toggleArrow.style.transition = 'none';
-              // Directly set rotation angle, don't use class
               toggleArrow.style.transform = `rotate(180deg)`;
             }
           } else {
@@ -731,44 +680,35 @@ const AlignerPlugin = (() => {
             const toggleArrow = state.container.querySelector('.toggle-arrow');
             if (toggleArrow) {
               toggleArrow.style.transition = 'none';
-              // Directly set rotation angle, don't use class
               toggleArrow.style.transform = `rotate(0deg)`;
             }
           }
-          
-          // Force redraw
+
           utilCirclesContainer.offsetHeight;
           toggleArrow?.offsetHeight;
-          
-          // Restore transition effect
+
           setTimeout(() => {
             utilCirclesContainer.style.transition = originalTransition;
           }, 50);
         } else {
-          // Normal application of visibility state
           if (state.isUtilsExpanded) {
             utilCirclesContainer.classList.remove('collapsed');
           } else {
             utilCirclesContainer.classList.add('collapsed');
           }
-          // Rotation animation is handled by animateRotation in toggleUtilIcons
         }
       }
     },
-    
-    // Toggle utility icons display state
+
     toggleUtilIcons() {
       state.isUtilsExpanded = !state.isUtilsExpanded;
       this.updateUtilIconsVisibility();
-      
-      // Add rotation animation
+
       const toggleArrow = state.container.querySelector('.toggle-arrow');
       if (toggleArrow) {
-        // Use GSAP-style JS animation method
         this.animateRotation(toggleArrow, state.isUtilsExpanded ? 180 : 0);
       }
-      
-      // Save state to localStorage
+
       try {
         localStorage.setItem('ComfyUI-Align.isUtilsExpanded', state.isUtilsExpanded ? 'true' : 'false');
       } catch (e) {
@@ -776,38 +716,29 @@ const AlignerPlugin = (() => {
       }
     },
 
-    // Rotate element using JS animation
     animateRotation(element, targetDegree) {
       if (!element) return;
-      
-      // Cancel any existing animation
+
       if (state.animationFrameId) {
         cancelAnimationFrame(state.animationFrameId);
         state.animationFrameId = null;
       }
       
       const startDegree = state.isUtilsExpanded ? 0 : 180;
-      const duration = 500; // Duration (milliseconds)
+      const duration = 500;
       const startTime = performance.now();
-      
-      // Remove expanded class, we only use inline style to control rotation
+
       element.classList.remove('expanded');
-      
-      // Animation frame function that calculates and applies rotation angle
-      // Uses requestAnimationFrame for smooth animation with easing
+
       const animate = (currentTime) => {
-        // Calculate progress (0 to 1) based on elapsed time
         const elapsed = currentTime - startTime;
         const progress = Math.min(elapsed / duration, 1);
-        
-        // Use easing function to make animation more natural
+
         const easeProgress = this.cubicBezier(0.34, 1.56, 0.64, 1, progress);
         const currentDegree = startDegree + (targetDegree - startDegree) * easeProgress;
-        
-        // Apply the current rotation angle
+
         element.style.transform = `rotate(${currentDegree}deg)`;
-        
-        // Continue animation until complete
+
         if (progress < 1) {
           state.animationFrameId = requestAnimationFrame(animate);
         } else {
@@ -817,10 +748,8 @@ const AlignerPlugin = (() => {
       
       state.animationFrameId = requestAnimationFrame(animate);
     },
-    
-    // Easing function implementation, simulating cubic-bezier
+
     cubicBezier(x1, y1, x2, y2, t) {
-      // Simplified bezier easing
       const p0 = 0;
       const p1 = y1;
       const p2 = y2;
@@ -853,16 +782,13 @@ const AlignerPlugin = (() => {
     },
 
     destroy() {
-      // Cancel any ongoing animations
       if (state.animationFrameId) {
         cancelAnimationFrame(state.animationFrameId);
         state.animationFrameId = null;
       }
-      
-      // Remove event listeners
+
       events.removeEventListeners();
-      
-      // Remove DOM elements
+
       if (state.container) {
         document.body.removeChild(state.container);
         state.container = null;
@@ -872,8 +798,7 @@ const AlignerPlugin = (() => {
         document.head.removeChild(state.styleElement);
         state.styleElement = null;
       }
-      
-      // Reset state
+
       state.visible = false;
       state.icons = {};
       state.initialized = false;
@@ -883,10 +808,23 @@ const AlignerPlugin = (() => {
   const actions = {
     toggle() {
       dom.initializeOnce();
-      dom.toggleVisibility();
+
+      if (state.colorPickerUsed) {
+        state.colorPickerUsed = false;
+        state.visible = false;
+        state.shiftKeyPressed = false;
+        dom.showUI();
+        return;
+      }
+
+      if (state.visible) {
+        dom.hideUI();
+      } else {
+        state.shiftKeyPressed = false;
+        dom.showUI();
+      }
     },
-    
-    // Original implementation of updateIconPositions
+
     _updateIconPositions() {
       const { iconSize, spacing } = CONFIG;
       const halfSize = iconSize / 2;
@@ -923,8 +861,7 @@ const AlignerPlugin = (() => {
         
         colorCirclesContainer.style.transform = `translate(${x}px, ${y}px)`;
       }
-      
-      // Update utility icons container position
+
       const utilCirclesContainer = state.container.querySelector('.util-circles-container');
       if (utilCirclesContainer) {
         const utilX = centerX + colorCirclesContainer.offsetWidth / 2 + 10;
@@ -933,10 +870,8 @@ const AlignerPlugin = (() => {
         utilCirclesContainer.style.transform = `translate(${utilX}px, ${utilY}px)`;
       }
     },
-    
-    // Throttled version to optimize performance
-    // Only updates UI position at most once every 16ms (approx 60fps)
-    updateIconPositions: null, // Will be initialized below
+
+    updateIconPositions: null,
 
     getComfyUIAppInstance() {
       if (window.app?.canvas && window.app?.graph) {
@@ -1010,9 +945,10 @@ const AlignerPlugin = (() => {
         dom.showNotification("Please select nodes or groups to apply color");
         return;
       }
+      state.colorPickerUsed = true;
 
       dom.hideUI();
-      
+
       setTimeout(() => {
         const colorInput = dom.createElement('input', '', {
           type: 'color',
@@ -1381,12 +1317,6 @@ const AlignerPlugin = (() => {
       }
     },
 
-    // Main function to execute node operations safely with proper error handling
-    // Handles node selection, pinned node filtering, and validation before running the operation
-    // Parameters:
-    //   - operationType: String identifying the type of operation ("alignment" or "resizing")
-    //   - operationFn: Function that performs the actual operation on the nodes
-    // Returns an object with success status and error message if applicable
     executeNodeOperation(operationType, operationFn) {
       try {
         const appInstance = this.getComfyUIAppInstance();
@@ -1394,12 +1324,10 @@ const AlignerPlugin = (() => {
           return { success: false, message: "Unable to get ComfyUI application instance" };
         }
 
-        // Get selected nodes and filter out pinned nodes that cannot be modified
         const selectedNodes = this.getSelectedNodes(appInstance);
         const pinnedNodes = selectedNodes.filter(node => node.flags?.pinned);
         const nonPinnedNodes = selectedNodes.filter(node => !(node.flags?.pinned));
-        
-        // Validate that we have enough non-pinned nodes to perform the operation
+
         if (nonPinnedNodes.length <= 1) {
           let errorMessage = "Cannot perform operation.";
           
@@ -1418,7 +1346,6 @@ const AlignerPlugin = (() => {
           return { success: false, message: errorMessage };
         }
 
-        // Execute the operation and update the canvas
         operationFn(nonPinnedNodes);
         appInstance.graph.setDirtyCanvas(true, true);
         
@@ -1429,7 +1356,6 @@ const AlignerPlugin = (() => {
       }
     },
 
-    // Get selected non-pinned nodes
     getSelectedNonPinnedNodes(appInstance) {
       const selectedNodes = this.getSelectedNodes(appInstance);
       return selectedNodes.filter(node => !(node.flags?.pinned));
@@ -1574,11 +1500,10 @@ const AlignerPlugin = (() => {
         }
 
         selectedNodes.forEach(node => {
-          // Toggle between BYPASS and ALWAYS mode
           if (node.mode === LGraphEventMode.BYPASS) {
-            node.mode = LGraphEventMode.ALWAYS; // Set to ALWAYS (normal)
+            node.mode = LGraphEventMode.ALWAYS;
           } else {
-            node.mode = LGraphEventMode.BYPASS; // Set to BYPASS
+            node.mode = LGraphEventMode.BYPASS;
           }
         });
 
@@ -1604,11 +1529,10 @@ const AlignerPlugin = (() => {
         }
 
         selectedNodes.forEach(node => {
-          // Toggle between NEVER and ALWAYS mode
           if (node.mode === LGraphEventMode.NEVER) {
-            node.mode = LGraphEventMode.ALWAYS; // Set to ALWAYS (normal)
+            node.mode = LGraphEventMode.ALWAYS;
           } else {
-            node.mode = LGraphEventMode.NEVER; // Set to NEVER (mute)
+            node.mode = LGraphEventMode.NEVER;
           }
         });
 
@@ -1633,10 +1557,8 @@ const AlignerPlugin = (() => {
           return { success: false, message: "No nodes selected" };
         }
 
-        // Check if all selected nodes are already pinned
         const allPinned = selectedNodes.every(node => node.flags?.pinned);
-        
-        // Toggle the pinned state
+
         selectedNodes.forEach(node => {
           if (!node.flags) {
             node.flags = {};
@@ -1690,7 +1612,7 @@ const AlignerPlugin = (() => {
     handleShiftKey(e) {
       if (e.key === 'Shift') {
         state.shiftKeyPressed = e.type === 'keydown';
-        
+
         if (e.type === 'keyup' && state.visible && !state.shiftKeyPressed) {
           dom.hideUI();
         }
@@ -1734,13 +1656,17 @@ const AlignerPlugin = (() => {
         
         const action = icon.dataset.id;
         if (action) {
+          if (action === 'moonCircle') {
+            actions.handleAlignAction(action);
+            return;
+          }
+
           actions.handleAlignAction(action);
-        }
-        
-        // If clicking the toggle button, don't close the panel
-        if (action !== 'toggleArrowCircle') {
-          if (!state.shiftKeyPressed) {
-            dom.hideUI();
+
+          if (action !== 'toggleArrowCircle') {
+            if (!state.shiftKeyPressed) {
+              dom.hideUI();
+            }
           }
         }
       });
@@ -1756,10 +1682,8 @@ const AlignerPlugin = (() => {
       if (!id) return;
       
       if (isHovering) {
-        // Unified handling of hover effects for all circular icons
         let shadowColor = 'rgba(255, 255, 255, 0.7)';
-        
-        // Set different shadow colors based on icon type
+
         if (id === 'muteCircle') {
           shadowColor = 'rgba(255, 0, 0, 0.5)';
         } else if (id === 'pinCircle') {
@@ -1784,12 +1708,10 @@ const AlignerPlugin = (() => {
             }
           }
         }
-        
-        // Uniformly apply shadow and increase z-index
+
         bg.style.boxShadow = `0 0 12px 4px ${shadowColor}`;
         icon.style.zIndex = 2;
       } else {
-        // Uniformly reset styles for all circular icons
         bg.style.boxShadow = '0 2px 8px rgba(0,0,0,0.15)';
         icon.style.zIndex = 1;
       }
@@ -1824,7 +1746,6 @@ const AlignerPlugin = (() => {
     }
   };
 
-  // Initialize throttled functions
   actions.updateIconPositions = utils.throttle(actions._updateIconPositions, THROTTLE_MS);
 
   return {
