@@ -110,7 +110,7 @@ const AlignerPlugin = (() => {
     shiftKeyPressed: false, // Current state of Shift key
     altKeyPressed: false,   // Current state of Alt key
     isUtilsExpanded: false, // Whether the utility icons panel is expanded
-    animationFrameId: null  // To track ongoing animations
+    animationFrameId: null,  // To track ongoing animations
   };
 
   const ICONS = [
@@ -1011,35 +1011,39 @@ const AlignerPlugin = (() => {
         return;
       }
 
-      const colorInput = dom.createElement('input', '', {
-        type: 'color',
-        value: selectedNodes.length > 0 ? selectedNodes[0].color?.replace(/rgba?\(.*\)/, '#000000') || '#3355aa' : selectedGroups.length > 0 ? selectedGroups[0].color || '#3355aa' : '#3355aa'
-      });
-
-      colorInput.style.position = 'absolute';
-      colorInput.style.visibility = 'hidden';
-      document.body.appendChild(colorInput);
-
-      const handleColorChange = (e) => {
-        const color = e.target.value;
-
-        selectedNodes.forEach(node => {
-          node.color = color;
-        });
-
-        selectedGroups.forEach(group => {
-          group.color = color;
-        });
-
-        appInstance.graph.setDirtyCanvas(true, true);
-      };
-
-      colorInput.addEventListener('input', handleColorChange);
-      colorInput.addEventListener('change', () => {
-        document.body.removeChild(colorInput);
-      });
+      dom.hideUI();
       
-      colorInput.click();
+      setTimeout(() => {
+        const colorInput = dom.createElement('input', '', {
+          type: 'color',
+          value: selectedNodes.length > 0 ? selectedNodes[0].color?.replace(/rgba?\(.*\)/, '#000000') || '#3355aa' : selectedGroups.length > 0 ? selectedGroups[0].color || '#3355aa' : '#3355aa'
+        });
+
+        colorInput.style.position = 'absolute';
+        colorInput.style.visibility = 'hidden';
+        document.body.appendChild(colorInput);
+
+        const handleColorChange = (e) => {
+          const color = e.target.value;
+
+          selectedNodes.forEach(node => {
+            node.color = color;
+          });
+
+          selectedGroups.forEach(group => {
+            group.color = color;
+          });
+
+          appInstance.graph.setDirtyCanvas(true, true);
+        };
+
+        colorInput.addEventListener('input', handleColorChange);
+        colorInput.addEventListener('change', () => {
+          document.body.removeChild(colorInput);
+        });
+        
+        colorInput.click();
+      }, 100);
     },
 
     handleAlignAction(action) {
@@ -1108,7 +1112,7 @@ const AlignerPlugin = (() => {
           return;
         case 'moonCircle':
           this.openNativeColorPicker();
-          return;
+          break;
         default:
           return;
       }
@@ -1688,7 +1692,7 @@ const AlignerPlugin = (() => {
         state.shiftKeyPressed = e.type === 'keydown';
         
         if (e.type === 'keyup' && state.visible && !state.shiftKeyPressed) {
-          actions.toggle();
+          dom.hideUI();
         }
       }
     },
@@ -1734,8 +1738,10 @@ const AlignerPlugin = (() => {
         }
         
         // If clicking the toggle button, don't close the panel
-        if (!state.shiftKeyPressed && action !== 'toggleArrowCircle') {
-          actions.toggle();
+        if (action !== 'toggleArrowCircle') {
+          if (!state.shiftKeyPressed) {
+            dom.hideUI();
+          }
         }
       });
     },
@@ -1791,7 +1797,7 @@ const AlignerPlugin = (() => {
 
     handleOutsideClick(e) {
       if (state.visible && state.container && !state.container.contains(e.target) && !state.shiftKeyPressed) {
-        actions.toggle();
+        dom.hideUI();
       }
     },
 
