@@ -114,7 +114,7 @@
 
 ## 配置
 
-如果您想修改快捷键以及垂直最小间距(Vertical Min Spacing)和水平最小间距配置(Horizontal Min Spacing)，可以在设置面板的Align中进行修改。
+如果您想修改快捷键以及垂直间距(Vertical Spacing)和水平间距配置(Horizontal Spacing)，可以在设置面板的Align中进行修改。
 
 
 <div align="center">
@@ -122,7 +122,7 @@
 </div>
 
 
-如果您想修改预设颜色，可在`web\js\align.js`中找到如下部分进行修改：
+如果您想修改预设颜色，可在`web\config\defaultConfig.js`中找到如下部分进行修改：
 
 ```javascript
 const CONFIG = {

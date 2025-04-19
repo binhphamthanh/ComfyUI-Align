@@ -114,14 +114,14 @@ Color modification supports node and groups. The plugin includes predefined colo
 
 ## Configuration
 
-If you want to modify the shortcut keys as well as the Vertical Min Spacing and Horizontal Min Spacing configurations, you can make the changes in the Align section of the settings panel.
+If you want to modify the shortcut keys as well as the Vertical Spacing and Horizontal Spacing configurations, you can make the changes in the Align section of the settings panel.
 
 <div align="center">
   <img src="https://moooonet.github.io/assets/Comfy-Align/images/setting.png" width="100%">
 </div>
 
 
-If you want to modify the preset colors, you can locate the following section in `web\js\align.js` to make changes:
+If you want to modify the preset colors, you can locate the following section in `web\config\defaultConfig.js` to make changes:
 
 ```javascript
 const CONFIG = {

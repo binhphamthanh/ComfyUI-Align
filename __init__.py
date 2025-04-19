@@ -10,9 +10,5 @@ __all__ = [
     "WEB_DIRECTORY",
 ]
 
-__author__ = """Moooonet"""
-__email__ = "moooonet@outlook.com"
-__version__ = "1.0.0"
-
 current_directory = os.path.dirname(os.path.abspath(__file__))
-WEB_DIRECTORY = os.path.join(current_directory, "web", "js")
+WEB_DIRECTORY = os.path.join(current_directory, "web")
