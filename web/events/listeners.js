@@ -1,24 +1,25 @@
-import { trackMousePosition, handleOutsideClick } from './mouse.js';
-import { handleKeyDown, handleShiftKey, handleAltKey } from './keyboard.js';
+import { trackMousePosition, handleOutsideClick } from "./mouse.js";
+import { handleKeyDown, handleShiftKey, handleAltKey } from "./keyboard.js";
 
 export function registerEventListeners() {
-  document.addEventListener('keydown', handleKeyDown);
-  document.addEventListener('mousemove', trackMousePosition);
-  document.addEventListener('click', handleOutsideClick);
-  
-  document.addEventListener('keydown', handleShiftKey);
-  document.addEventListener('keyup', handleShiftKey);
-  document.addEventListener('keydown', handleAltKey);
-  document.addEventListener('keyup', handleAltKey);
+  // Use capture phase for keyboard events to intercept them early
+  document.addEventListener("keydown", handleKeyDown, true);
+  document.addEventListener("mousemove", trackMousePosition);
+  document.addEventListener("click", handleOutsideClick);
+
+  document.addEventListener("keydown", handleShiftKey, true);
+  document.addEventListener("keyup", handleShiftKey, true);
+  document.addEventListener("keydown", handleAltKey, true);
+  document.addEventListener("keyup", handleAltKey, true);
 }
 
 export function removeEventListeners() {
-  document.removeEventListener('keydown', handleKeyDown);
-  document.removeEventListener('mousemove', trackMousePosition);
-  document.removeEventListener('click', handleOutsideClick);
-  
-  document.removeEventListener('keydown', handleShiftKey);
-  document.removeEventListener('keyup', handleShiftKey);
-  document.removeEventListener('keydown', handleAltKey);
-  document.removeEventListener('keyup', handleAltKey);
-} 
+  document.removeEventListener("keydown", handleKeyDown, true);
+  document.removeEventListener("mousemove", trackMousePosition);
+  document.removeEventListener("click", handleOutsideClick);
+
+  document.removeEventListener("keydown", handleShiftKey, true);
+  document.removeEventListener("keyup", handleShiftKey, true);
+  document.removeEventListener("keydown", handleAltKey, true);
+  document.removeEventListener("keyup", handleAltKey, true);
+}
