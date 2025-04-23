@@ -1820,8 +1820,19 @@ app.registerExtension({
     },
   ],
   async setup() {
-    await app.extensionManager.setting.set("Align.Spacing.horizontal", DEFAULT_CONFIG.horizontalSpacing);
-    await app.extensionManager.setting.set("Align.Spacing.vertical", DEFAULT_CONFIG.verticalSpacing);
+    const horizontalSetting = app.extensionManager.setting.get("Align.Spacing.horizontal");
+    if (horizontalSetting === undefined) {
+      await app.extensionManager.setting.set("Align.Spacing.horizontal", DEFAULT_CONFIG.horizontalSpacing);
+    } else {
+      AlignerPlugin.CONFIG.horizontalSpacing = horizontalSetting;
+    }
+
+    const verticalSetting = app.extensionManager.setting.get("Align.Spacing.vertical");
+    if (verticalSetting === undefined) {
+      await app.extensionManager.setting.set("Align.Spacing.vertical", DEFAULT_CONFIG.verticalSpacing);
+    } else {
+      AlignerPlugin.CONFIG.verticalSpacing = verticalSetting;
+    }
 
     const panelSetting = app.extensionManager.setting.get("Align.Color.applyToPanel");
     if (panelSetting === undefined) {
@@ -1836,9 +1847,6 @@ app.registerExtension({
     } else {
       AlignerPlugin.CONFIG.applyToHeader = headerSetting;
     }
-
-    AlignerPlugin.CONFIG.horizontalSpacing = app.extensionManager.setting.get("Align.Spacing.horizontal") || DEFAULT_CONFIG.horizontalSpacing;
-    AlignerPlugin.CONFIG.verticalSpacing = app.extensionManager.setting.get("Align.Spacing.vertical") || DEFAULT_CONFIG.verticalSpacing;
 
     const shortcutSetting = app.extensionManager.setting.get("Align.Shortcut");
     if (shortcutSetting !== undefined) {
