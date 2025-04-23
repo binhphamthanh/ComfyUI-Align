@@ -4,8 +4,8 @@ import { SVG_PATHS } from "./svg-paths.js";
 const DEFAULT_CONFIG = {
   iconSize: 36,
   spacing: 112,
-  horizontalMinSpacing: 30,
-  verticalMinSpacing: 25,
+  horizontalSpacing: 30,
+  verticalSpacing: 25,
   colors: {
     circle1: '#a93232',
     circle2: '#79461d',
@@ -38,8 +38,8 @@ const DEFAULT_CONFIG = {
   applyToHeader: true,
   applyToPanel: false,
   safetyMargin: {
-    horizontal: 20,
-    vertical: 30
+    horizontal: 12,
+    vertical: 42
   },
   minNodeSize: {
     width: 100,
@@ -50,7 +50,7 @@ const DEFAULT_CONFIG = {
 const AlignerPlugin = (() => {
   const validateConfig = (config) => {
     const required = [
-      'iconSize', 'spacing', 'horizontalMinSpacing', 'verticalMinSpacing', 
+      'iconSize', 'spacing', 'horizontalSpacing', 'verticalSpacing', 
       'colors', 'colorMap', 'transition', 'shortcut'
     ];
 
@@ -1379,18 +1379,11 @@ const AlignerPlugin = (() => {
         node.pos[1] = referenceNodeTopY;
       });
       
-      const minSpacing = CONFIG.horizontalMinSpacing;
+      const spacing = CONFIG.horizontalSpacing;
       const safetyMargin = CONFIG.safetyMargin.horizontal;
-      const effectiveMinSpacing = minSpacing + safetyMargin;
+      const effectiveSpacing = spacing + safetyMargin;
       
-      const totalRequiredSpace = nodeWidthSum + (sortedNodes.length - 1) * effectiveMinSpacing;
-      
-      let spacing = effectiveMinSpacing;
-      
-      if (totalWidth > totalRequiredSpace) {
-        spacing = (totalWidth - nodeWidthSum) / (sortedNodes.length - 1);
-        spacing = Math.max(spacing, effectiveMinSpacing);
-      }
+      const currentSpacing = effectiveSpacing;
       
       if (state.altKeyPressed) {
         const rightNodeRightEdge = referenceNode.pos[0] + referenceNode.size[0];
@@ -1403,7 +1396,7 @@ const AlignerPlugin = (() => {
           node.pos[0] = currentX;
           
           if (i > 0) {
-            currentX -= spacing;
+            currentX -= currentSpacing;
           }
         }
       } else {
@@ -1412,12 +1405,7 @@ const AlignerPlugin = (() => {
           node.pos[0] = currentX;
           
           if (index < sortedNodes.length - 1) {
-            const nextMinX = currentX + node.size[0] + effectiveMinSpacing;
-            currentX += node.size[0] + spacing;
-            
-            if (currentX < nextMinX) {
-              currentX = nextMinX;
-            }
+            currentX += node.size[0] + currentSpacing;
           }
         });
       }
@@ -1443,18 +1431,11 @@ const AlignerPlugin = (() => {
         node.pos[0] += offsetX;
       });
 
-      const minSpacing = CONFIG.verticalMinSpacing;
+      const spacing = CONFIG.verticalSpacing;
       const safetyMargin = CONFIG.safetyMargin.vertical;
-      const effectiveMinSpacing = minSpacing + safetyMargin;
+      const effectiveSpacing = spacing + safetyMargin;
       
-      const totalRequiredSpace = nodeHeightSum + (sortedNodes.length - 1) * effectiveMinSpacing;
-      
-      let spacing = effectiveMinSpacing;
-      
-      if (totalHeight > totalRequiredSpace) {
-        spacing = (totalHeight - nodeHeightSum) / (sortedNodes.length - 1);
-        spacing = Math.max(spacing, effectiveMinSpacing);
-      }
+      const currentSpacing = effectiveSpacing;
       
       if (state.altKeyPressed) {
         const bottomNodeBottomEdge = referenceNode.pos[1] + referenceNode.size[1];
@@ -1467,7 +1448,7 @@ const AlignerPlugin = (() => {
           node.pos[1] = currentY;
           
           if (i > 0) {
-            currentY -= spacing;
+            currentY -= currentSpacing;
           }
         }
       } else {
@@ -1476,12 +1457,7 @@ const AlignerPlugin = (() => {
           node.pos[1] = currentY;
           
           if (index < sortedNodes.length - 1) {
-            const nextMinY = currentY + node.size[1] + effectiveMinSpacing;
-            currentY += node.size[1] + spacing;
-            
-            if (currentY < nextMinY) {
-              currentY = nextMinY;
-            }
+            currentY += node.size[1] + currentSpacing;
           }
         });
       }
@@ -1768,38 +1744,38 @@ app.registerExtension({
   name: "ComfyUI-Align",
   settings: [
     {
-      id: "Align.Spacing.horizontalMin",
-      name: "Horizontal Min Spacing",
+      id: "Align.Spacing.horizontal",
+      name: "Horizontal Spacing",
       type: "slider",
-      defaultValue: DEFAULT_CONFIG.horizontalMinSpacing,
+      defaultValue: DEFAULT_CONFIG.horizontalSpacing,
       attrs: {
-        min: 10,
+        min: 0,
         max: 200,
         step: 1
       },
-      tooltip: "Minimum horizontal spacing between nodes when aligning (in pixels)",
+      tooltip: "Horizontal spacing between nodes when aligning (in pixels)",
       category: ["Align", "Spacing", "Horizontal"],
       onChange: (value) => {
         if (AlignerPlugin && AlignerPlugin.CONFIG) {
-          AlignerPlugin.CONFIG.horizontalMinSpacing = value;
+          AlignerPlugin.CONFIG.horizontalSpacing = value;
         }
       }
     },
     {
-      id: "Align.Spacing.verticalMin",
-      name: "Vertical Min Spacing",
+      id: "Align.Spacing.vertical",
+      name: "Vertical Spacing",
       type: "slider",
-      defaultValue: DEFAULT_CONFIG.verticalMinSpacing,
+      defaultValue: DEFAULT_CONFIG.verticalSpacing,
       attrs: {
-        min: 10,
+        min: 0,
         max: 200,
         step: 1
       },
-      tooltip: "Minimum vertical spacing between nodes when aligning (in pixels)",
+      tooltip: "Vertical spacing between nodes when aligning (in pixels)",
       category: ["Align", "Spacing", "Vertical"],
       onChange: (value) => {
         if (AlignerPlugin && AlignerPlugin.CONFIG) {
-          AlignerPlugin.CONFIG.verticalMinSpacing = value;
+          AlignerPlugin.CONFIG.verticalSpacing = value;
         }
       }
     },
@@ -1844,8 +1820,8 @@ app.registerExtension({
     },
   ],
   async setup() {
-    await app.extensionManager.setting.set("Align.Spacing.horizontalMin", DEFAULT_CONFIG.horizontalMinSpacing);
-    await app.extensionManager.setting.set("Align.Spacing.verticalMin", DEFAULT_CONFIG.verticalMinSpacing);
+    await app.extensionManager.setting.set("Align.Spacing.horizontal", DEFAULT_CONFIG.horizontalSpacing);
+    await app.extensionManager.setting.set("Align.Spacing.vertical", DEFAULT_CONFIG.verticalSpacing);
 
     const panelSetting = app.extensionManager.setting.get("Align.Color.applyToPanel");
     if (panelSetting === undefined) {
@@ -1861,8 +1837,8 @@ app.registerExtension({
       AlignerPlugin.CONFIG.applyToHeader = headerSetting;
     }
 
-    AlignerPlugin.CONFIG.horizontalMinSpacing = app.extensionManager.setting.get("Align.Spacing.horizontalMin") || DEFAULT_CONFIG.horizontalMinSpacing;
-    AlignerPlugin.CONFIG.verticalMinSpacing = app.extensionManager.setting.get("Align.Spacing.verticalMin") || DEFAULT_CONFIG.verticalMinSpacing;
+    AlignerPlugin.CONFIG.horizontalSpacing = app.extensionManager.setting.get("Align.Spacing.horizontal") || DEFAULT_CONFIG.horizontalSpacing;
+    AlignerPlugin.CONFIG.verticalSpacing = app.extensionManager.setting.get("Align.Spacing.vertical") || DEFAULT_CONFIG.verticalSpacing;
 
     const shortcutSetting = app.extensionManager.setting.get("Align.Shortcut");
     if (shortcutSetting !== undefined) {
