@@ -11,4 +11,4 @@ __all__ = [
 ]
 
 current_directory = os.path.dirname(os.path.abspath(__file__))
-WEB_DIRECTORY = os.path.join(current_directory, "web")
+WEB_DIRECTORY = os.path.join(current_directory, "web", "js")
