@@ -7,6 +7,9 @@ import { updateIconPositions, handleAlignAction } from "./actions/actions.js";
 import { registerEventListeners, removeEventListeners } from "./events/events.js";
 import { setupExtension, delayedInitialization } from "./config/config.js";
 
+// Add a debug flag for troubleshooting keyboard shortcuts
+CONFIG.debug = false;
+
 const AlignerPlugin = (() => {
   const THROTTLE_FPS = 60;
   const THROTTLE_MS = Math.floor(1000 / THROTTLE_FPS);
@@ -117,6 +120,19 @@ app.registerExtension({
       onChange: (value) => {
         if (AlignerPlugin && AlignerPlugin.CONFIG) {
           AlignerPlugin.CONFIG.applyToHeader = value;
+        }
+      }
+    },
+    {
+      id: "Align.Debug",
+      name: "Debug Mode",
+      type: "boolean",
+      defaultValue: CONFIG.debug,
+      tooltip: "Enable debugging for keyboard shortcuts",
+      category: ["Align", "Developer"],
+      onChange: (value) => {
+        if (AlignerPlugin && AlignerPlugin.CONFIG) {
+          AlignerPlugin.CONFIG.debug = value;
         }
       }
     },
