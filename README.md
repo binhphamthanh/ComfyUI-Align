@@ -152,6 +152,11 @@ const CONFIG = {
 
 
 ## Star History
-<div align="center">
-  [![Star History Chart](https://api.star-history.com/svg?repos=Moooonet/ComfyUI-Align&type=Date)](https://www.star-history.com/#Moooonet/ComfyUI-Align&Date)
-</div>
+
+<a href="https://www.star-history.com/#Moooonet/ComfyUI-Align&Date">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Moooonet/ComfyUI-Align&type=Date&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=Moooonet/ComfyUI-Align&type=Date" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=Moooonet/ComfyUI-Align&type=Date" />
+ </picture>
+</a>
