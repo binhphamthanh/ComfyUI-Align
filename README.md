@@ -121,7 +121,7 @@ If you want to modify the shortcut keys as well as the Vertical Spacing and Hori
 </div>
 
 
-If you want to modify the preset colors, you can locate the following section in `web\config\defaultConfig.js` to make changes:
+If you want to modify the preset colors, you can locate the following section in `web\js\align.js` to make changes:
 
 ```javascript
 const CONFIG = {
@@ -148,4 +148,10 @@ const CONFIG = {
     <a href='https://ko-fi.com/M4M21CRQOT' target='_blank'><img height='32' style='border:0px;height:32px;' src='https://storage.ko-fi.com/cdn/kofi6.png?v=6' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
     <a href='https://afdian.com/a/moooonet' target='_blank'><img height='32' style='border:0px;height:32px;' src='https://moooonet.github.io/assets/Comfy-Align/images/afdian.png' border='0' alt='AFDIAN' /></a>
   </div>
+</div>
+
+
+## Star History
+<div align="center">
+  [![Star History Chart](https://api.star-history.com/svg?repos=Moooonet/ComfyUI-Align&type=Date)](https://www.star-history.com/#Moooonet/ComfyUI-Align&Date)
 </div>
