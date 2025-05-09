@@ -1,162 +1,123 @@
 <div align="center">
-<img src="https://moooonet.github.io/assets/Comfy-Align//images/alignNodes.jpg" width="100%">
+<img src="https://moooonet.github.io/assets/Comfy-Align//images/panel.png" width="100%">
 <br><br>
 
-[![English](https://img.shields.io/badge/Languages-English-blue)](README.md)
-[![简体中文](https://img.shields.io/badge/%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87-blue)](README_zh.md)
-[![License](https://img.shields.io/badge/License-GPL3.0-red)](https://www.gnu.org/licenses/gpl-3.0.en.html)
-[![submit issue](https://img.shields.io/badge/Submit-issue-cyan)](https://github.com/Moooonet/Comfy-Align/issues)
+   [![English](https://img.shields.io/badge/Languages-English-blue)](README.md)
+   [![简体中文](https://img.shields.io/badge/%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87-blue)](README_zh.md)
+   [![submit issue](https://img.shields.io/badge/Submit-issue-cyan)](https://github.com/Moooonet/Comfy-Align/issues)
 </div>
 
 ---
+ComfyUI-Align provides a powerful set of node alignment, stretching, and color configuration tools, addressing the lack of node alignment functionality in ComfyUI. All features also support node groups.
 
-A powerful node alignment and color management plugin for ComfyUI, designed to enhance your workflow efficiency
+When using ComfyUI's native color functionality, I noticed it colors both the node's title bar and panel. This adds "color" and "bgcolor" parameters to the corresponding nodes in the workflow, but the background of the parameters within the node remains unchanged (default dark gray). This can lead to two issues:
+- Readability problems, making node titles or panel parameters difficult to read (especially with high-brightness or over-saturated colors)
+- Ugly visual disharmony between parameter backgrounds and panel colors, creating aesthetically unbearable nodes
 
+This is why this plugin's color management defaults to only changing the title bar background - making different nodes immediately distinguishable while keeping the workflow clean. This inspiration comes from Blender.
 
-
-> *As a certified member of the OCD club, I realized ComfyUI needed a professional-grade alignment therapist (with optional color therapy sessions). So I decided to moonlight as a UX designer and developed this plugin. Fun fact: My name contains 'Moon', so I've shamelessly channeled my inner lunar deity by making the color picker icon a crescent moon.*
-
-
-When using ComfyUI's native color feature, I noticed it dyes both the node's title bar and panel simultaneously. While this adds "color" and "bgcolor" parameters to the corresponding node in the workflow, the background of individual parameters remains unchanged (defaulting to dark gray). This can lead to two issues:
-- Legibility problems where node titles or panel parameters become hard to read (especially with high-brightness or over-saturated colors)
-- Ugly visual dissonance between parameter backgrounds and panel colors, creating aesthetically unbearable nodes
-
-That's why this plugin's color management by default only changes the title bar background - making different nodes instantly distinguishable while maintaining workflow cleanliness. This design was inspired by Blender's approach.
 However, you can still configure how colors are applied in the settings:
-- **Apply color to node panel (background)** 
-- **Apply color to node header** - (enabled by default)
+- **Apply color to node header** - Apply color to the node title bar (checked by default)
+- **Apply color to node panel (background)** - Apply color to the node panel (background area)
 
 <div align="left">
   <p>
-    <span>Video：</span>
+    <span>Video tutorials:</span>
     <a href="https://youtu.be/gQdG9p6dWg4">Youtube</a> |
-    <a href="https://www.bilibili.com/video/BV1brdWYbEGE">BiliBili</a> 
+    <a href="https://www.bilibili.com/video/BV1brdWYbEGE">BiliBili</a>
   </p>
 </div>
 
-Tested on ComfyUI Desktop - works smoother than a compulsively aligned grid. Happy pixel-perfecting!
+Tested on ComfyUI Desktop version and portable package - smoother than OCD grid alignment. Happy pixel-perfect aligning!
 
-> *If this plugin helps preserve your sanity:  Drop a ⭐ please(to sustain my caffeine dependency)*
+> *If this plugin successfully preserved your sanity: please leave a ⭐ (used to maintain caffeine dependency)*
 
 
 ## Features
-
-- **Node Alignment** - Align nodes to left, right, top, bottom, horizontal equidistant distribution, vertical equidistant distribution
-- **Node Stretching** - Stretch nodes to match dimensions or align to edges
-- **Color Management** - Apply predefined colors to nodes and groups or use custom colors
-- **Node Operations** - Toggle node bypass mode, mute mode, or pin nodes in place
-- **Intuitive UI** - Radial menu activated with Alt+A
+The following features support both nodes and groups
+- **Basic Alignment** - Align nodes or groups to top, bottom, left, or right
+- **Basic Stretching** - Stretch nodes or groups to top, bottom, left, or right
+- **Equal Distribution** - By default, horizontally or vertically distribute nodes or groups with equal spacing, using the leftmost node as the target
+- **Dual-side Stretching** - By default, stretch nodes or groups simultaneously left-right or top-bottom, using the widest/tallest node as the target
+- **Node Coloring** - Change the color of node titles or backgrounds, supports node group coloring
+- **Advanced Color Picker** - Click the moon icon to open the Color Picker panel, supports area color selection, eyedropper, hue, and transparency
+- **Color Presets** - The Color Picker panel supports saving custom color presets and applying color presets with one click
 
 ## Installation
 
-1. Clone this repository:
-   ```bash
+```bash
    cd ComfyUI/custom_nodes
 
    git clone https://github.com/Moooonet/ComfyUI-Align.git
    ```
-2. Restart ComfyUI
 
 ## Usage
+### Default Operation Method
+- Use `Alt+A` to activate the cross panel
+- Hold the `Shift` key to keep the cross panel displayed for continuous operations
 
-1. Select two or more nodes in your ComfyUI workspace
-2. Press `Alt+A` to activate the alignment menu
-3. Click on the desired action icon
+### Smoother Operation Method
+- Check `Hold Shortcut Mode`, change the shortcut to `Tab` or other suitable keys, such as `~` key
+- Hold the `Tab` key to activate the cross panel, move the cursor over an icon without clicking, release the `Tab` key to execute the operation
+- Hold the `Tab` key and click on icons for continuous operations
 
-## Details
+### Advanced Alignment and Stretching Tips
+Hold the `Alt` key for reverse operations, for example:
+- **Horizontal Equal Distribution** - By default, nodes or groups are equally distributed with the leftmost node or group as the target; when holding the `Alt` key, the rightmost node or group becomes the target
+- **Vertical Equal Distribution** - By default, nodes or groups are equally distributed with the topmost node or group as the target; when holding the `Alt` key, the bottommost node or group becomes the target
+- **Horizontal Dual-side Stretching** - By default, horizontal stretching uses the widest node or group as the target; when holding the `Alt` key, the narrowest node or group becomes the target
+- **Vertical Dual-side Stretching** - By default, vertical stretching uses the tallest node or group as the target; when holding the `Alt` key, the shortest node or group becomes the target
 
-### Basic Alignment
+When a single node group is selected:
+  - Basic top, bottom, left, and right alignment operations will constrain nodes within that node group (requires selecting both the node group and nodes within it)
+  - Stretching operations will stretch the node group edges to fit the edges of the nodes within it (only requires selecting the node group)
 
-- **Left Alignment** - Aligns all selected nodes to the leftmost edge
-- **Right Alignment** - Aligns all selected nodes to the rightmost edge
-- **Top Alignment** - Aligns all selected nodes to the top edge
-- **Bottom Alignment** - Aligns all selected nodes to the bottom edge
-- **Horizontal Distribution** - Evenly space nodes horizontally: defaults to starting from leftmost node, hold Alt to start from rightmost node
-- **Vertical Distribution** - Evenly space nodes vertically: defaults to starting from topmost node, hold Alt to start from bottommost node
+### Advanced Color Picker
+- **Area Color** - Adjust color brightness and saturation
+- **Eyedropper Tool** - Pick colors from the screen
+- **Hue Slider** - Adjust hue
+- **Transparency Slider** - Adjust color transparency
+- **Color Presets** - Without selecting a node, click Save to save all node colors to a preset, click Apply to apply colors from the preset to corresponding nodes. The Save and Apply buttons are only valid when a node is selected
+- **Delete Presets** - Click Clear to delete all colors in the preset. Right-click on any color in the preset color list to delete a specific color.
 
-### Node Stretching
-
-- **Left Stretch** - Stretches nodes to the left edge. If already left-aligned, equalizes widths by adjusting the right side
-- **Right Stretch** - Stretches nodes to the right edge. If already right-aligned, equalizes widths by adjusting the left side
-- **Top Stretch** - Stretches nodes to the top edge. If already top-aligned, equalizes heights by adjusting the bottom side
-- **Bottom Stretch** - Stretches nodes to the bottom edge. If already bottom-aligned, equalizes heights by adjusting the top side
-- **Horizontal Stretch** - Adjust all nodes to the same width: defaults to using the widest node's width, hold Alt to use the narrowest node's width
-- **Vertical Stretch** - Adjust all nodes to the same height: defaults to using the tallest node's height, hold Alt to use the shortest node's height
-
-### Color Management
-
-Color modification supports node and groups. The plugin includes predefined colors:
-
-| Color | Hex Code | Description |
-|-------|----------|-------------|
-| 🔴 | #a93232 | Red |
-| 🟠 | #79461d | Orange | 
-| 🟡 | #6e6e1d | Yellow |
-| 🟢 | #2b652b | Green |
-| 🔵 | #248382 | Cyan |
-| 🔵 | #246283 | Blue |
-| 🟣 | #3c3c83 | Purple |
-| ♟️ | - | Chessboard (removes color) |
-| 🌙 | - | Moon (for custom colors) |
-
-### Node Operations
-
-- **Node Bypass** - Toggle bypass mode to allow inputs to pass directly to outputs without processing node content
-- **Node Mute** - Toggle mute mode to temporarily disable node execution
-- **Node Pin** - Pin nodes in place to prevent them from being moved by alignment and stretching operations
-
-### Advanced Operation Tips
-
-- **Shift Key Panel Retention** - Hold Shift when clicking operation icons to keep the radial panel visible for consecutive operations
-- **Alt Key Modifier** - Hold Alt when performing horizontal/vertical distribution to change alignment direction and reference point
-- **Pinned Node Safety** - Alignment and stretching operations automatically skip pinned nodes
-- **Utility Panel** - Expand/collapse the utility tool panel using the arrow icon next to the moon
-
-## Configuration
-
-If you want to modify the shortcut keys as well as the Vertical Spacing and Horizontal Spacing configurations, you can make the changes in the Align section of the settings panel.
-
+## Parameter Configuration
 <div align="center">
-  <img src="https://moooonet.github.io/assets/Comfy-Align/images/setting.png" width="100%">
+  <img src="https://moooonet.github.io/assets/Comfy-Align/images/newSetting.png" width="100%">
 </div>
 
+- **Color Application**
+  - **Apply color to node header** - Change the color of the node title bar (checked by default)
+  - **Apply color to node panel** - Change the color of the node panel (check according to personal preference)
 
-If you want to modify the preset colors, you can locate the following section in `web\js\align.js` to make changes:
+- **Shortcuts**
+  - **Default shortcut** - `Alt+A`
+  - **Hold Shortcut Mode** - When checked, hold the shortcut key to display the panel, move the cursor over an icon, and release to execute the operation. You can also hold the shortcut key and click on icons for continuous operations
+  - Recommended setting: If you check `Hold Shortcut Mode`, change the shortcut to the `Tab` or `~` key for smoother operation.
 
-```javascript
-const CONFIG = {
-...
-  colors: {
-    circle1: '#83314a',  // Red
-    circle2: '#79461d',  // Orange
-    circle3: '#6e6e1d',  // Yellow
-    circle4: '#2b652b',  // Green
-    circle5: '#248382',  // Cyan
-    circle6: '#246283',  // Blue
-    circle7: '#3c3c83',  // Purple
-    ...
-  },
-};
-```
+- **Spacing Settings**
+  - Node Horizontal Spacing
+  - Node Vertical Spacing
+  - Group Horizontal Spacing
+  - Group Vertical Spacing
 
-## Sponsor
+
+---
+
+
+
 <div align="center">
-  <br>
-  <p><strong><i>The fragrance always stays in the hand that gives the rose.</i></strong></p>
-  <p>Every contribution directly fuels progress in the open-source world. This support from the community not only validates the value of technology, but constitutes the lifeblood that sustains the open-source ecosystem.</p>
-  <div>
-    <a href='https://ko-fi.com/M4M21CRQOT' target='_blank'><img height='32' style='border:0px;height:32px;' src='https://storage.ko-fi.com/cdn/kofi6.png?v=6' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
-    <a href='https://afdian.com/a/moooonet' target='_blank'><img height='32' style='border:0px;height:32px;' src='https://moooonet.github.io/assets/Comfy-Align/images/afdian.png' border='0' alt='AFDIAN' /></a>
-  </div>
+   <a href="https://www.star-history.com/#Moooonet/ComfyUI-Align&Date">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Moooonet/ComfyUI-Align&type=Date&theme=dark" />
+      <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=Moooonet/ComfyUI-Align&type=Date" />
+      <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=Moooonet/ComfyUI-Align&type=Date" />
+    </picture>
+   </a>
 </div>
 
+---
 
-## Star History
-
-<a href="https://www.star-history.com/#Moooonet/ComfyUI-Align&Date">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Moooonet/ComfyUI-Align&type=Date&theme=dark" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=Moooonet/ComfyUI-Align&type=Date" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=Moooonet/ComfyUI-Align&type=Date" />
- </picture>
-</a>
+<div align="center">
+  <p>Unless explicitly authorized, integration, modification, or redistribution in any form is strictly prohibited.</p>
+  <p>© 2025 Moooonet. All rights reserved.</p>
+</div>

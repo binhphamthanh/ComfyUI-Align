@@ -1,162 +1,123 @@
 <div align="center">
-<img src="https://moooonet.github.io/assets/Comfy-Align/images/alignNodes.jpg" width="100%">
+<img src="https://moooonet.github.io/assets/Comfy-Align//images/panel.png" width="100%">
 <br><br>
 
-[![English](https://img.shields.io/badge/Languages-English-blue)](README.md)
-[![简体中文](https://img.shields.io/badge/%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87-blue)](README_zh.md)
-[![License](https://img.shields.io/badge/License-GPL3.0-red)](https://www.gnu.org/licenses/gpl-3.0.en.html)
-[![submit issue](https://img.shields.io/badge/Submit-issue-cyan)](https://github.com/Moooonet/Comfy-Align/issues)
+   [![English](https://img.shields.io/badge/Languages-English-blue)](README.md)
+   [![简体中文](https://img.shields.io/badge/%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87-blue)](README_zh.md)
+   [![submit issue](https://img.shields.io/badge/Submit-issue-cyan)](https://github.com/Moooonet/Comfy-Align/issues)
 </div>
 
 ---
-<div align="center">
-  <p>ComfyUI 的强大节点对齐与节点配色插件，旨在提升您的工作流效率</p>
-</div>
+ComfyUI-Align提供了一套强大的节点对齐-拉伸-色彩配置工具，弥补了ComfyUI没有节点对齐功能的缺陷，所有功能同时支持节点组。
 
-> *作为强迫症俱乐部的认证成员，我意识到ComfyUI需要一位专业级的对齐治疗师（可选配色疗法）。于是我决定客串UX设计师开发这个插件。*
->  *我的名字中包含"月"，所以我厚颜无耻地释放了内心的月亮神力，把自定义取色器图标做成了新月形状。*
-
-
-在使用ComfyUI原生的颜色功能时，我注意到它会同时染色节点的标题栏和面板。这会在工作流的相应节点中添加"color"和"bgcolor"参数，但节点内的各项参数的背景保持不变（默认为深灰色）。这可能导致两个问题：
+在使用ComfyUI原生的色彩功能时，我注意到它会同时染色节点的标题栏和面板。这会在工作流的相应节点中添加"color"和"bgcolor"参数，但节点内的各项参数的背景保持不变（默认为深灰色）。这可能导致两个问题：
 - 可读性问题，使节点标题或面板参数难以阅读（尤其是高亮度或过饱和的颜色）
 - 参数背景和面板颜色之间的丑陋视觉不协调，创造出美学上难以忍受的节点
 
-这就是为什么本插件的颜色管理默认只改变标题栏背景 - 使不同节点立即可区分，同时保持工作流的整洁。这一设计灵感来自Blender的节点。
+这就是为什么本插件的颜色管理默认只改变标题栏背景 - 使不同节点立即可区分，同时保持工作流的整洁。这一灵感来自Blender
+
 但是，您仍然还可以在设置中配置颜色应用方式：
-- **Apply color to node panel (background)** - 对节点面板（背景区域）应用颜色
 - **Apply color to node header** - 对节点标题栏应用颜色（默认勾选）
+- **Apply color to node panel (background)** - 对节点面板（背景区域）应用颜色
 
 <div align="left">
   <p>
-    <span>视频：</span>
-    <a href="https://youtu.be/gQdG9p6dWg4">Youtube</a> | 
-    <a href="https://www.bilibili.com/video/BV1brdWYbEGE">BiliBili</a> 
+    <span>视频教程：</span>
+    <a href="https://youtu.be/gQdG9p6dWg4">Youtube</a> |
+    <a href="https://www.bilibili.com/video/BV1brdWYbEGE">BiliBili</a>
   </p>
 </div>
 
-已在ComfyUI Desktop版完成测试——运行比强迫症对齐的网格还要丝滑。祝各位像素对齐愉快！
+已在ComfyUI Desktop版和官方便携包完成测试 - 运行比强迫症对齐的网格还要丝滑。祝各位像素对齐愉快！
 
 > *若本插件成功守护了您的理智： 请来颗⭐（用于维持咖啡因依赖）*
 
 
 ## 功能
-
-- **节点对齐** - 将节点对齐到左侧、右侧、顶部、底部，水平等距分布、垂直等距分布
-- **节点拉伸** - 拉伸节点以匹配尺寸或对齐到边缘
-- **颜色管理** - 对节点和组应用预定义颜色或使用自定义颜色
-- **节点操作** - 切换节点的绕过模式、静音模式或固定节点位置
-- **直观的UI** - 通过Alt+A激活的十字径向面板
+以下功能均支持节点和组
+- **基本对齐** - 对节点或组进行上下左右对齐
+- **基本拉伸** - 对节点或组进行上下左右拉伸
+- **等距分布** - 默认以最左侧节点为目标，对节点或组进行水平或垂直等距分布对齐
+- **双侧拉伸** - 默认以最宽/最高节点为目标，对节点或组进行左右或上下同时拉伸
+- **节点换色** - 对节点标题或背景进行换色，支持节点组换色
+- **高级取色** - 点击月亮图标打开Color Picker面板，支持区域颜色选择，吸管，色相，透明度
+- **颜色预设** - Color Picker面板支持保存自定义颜色预设，支持一键应用颜色预设
 
 ## 安装
 
-1. 克隆此仓库：
-   ```bash
+```bash
    cd ComfyUI/custom_nodes
 
    git clone https://github.com/Moooonet/ComfyUI-Align.git
    ```
-2. 重启ComfyUI
 
 ## 使用方法
+### 默认操作方法
+- 使用`Alt+A`激活十字面板
+- 按住`Shift`键保持十字面板显示，进行连续操作
 
-1. 在ComfyUI工作区中选择两个或更多节点
-2. 按`Alt+A`呼出十字面板
-3. 点击所需的操作图标
+### 更丝滑的操作方法
+- 勾选`Hold Shortcut Mode`，将快捷键改为`Tab`或其它合适的键，比如`~`键
+- 按住`Tab`键打开激活十字面板，光标移到图标上无需点击，松开`Tab`键执行操作。
+- 按住`Tab`键并点击图标进行连续操作
 
-## 详细介绍
+### 对齐与拉伸高级技巧
+按住`Alt`键反向操作，举例来说：
+- **水平等距对齐** - 默认以左侧节点或组为目标等距分布对齐，按住`Alt`键时，则以右侧节点或组为目标
+- **垂直等距对齐** - 默认以顶部节点或组为目标等距分布对齐，按住`Alt`键时，则以底部节点或组为目标
+- **水平双侧拉伸** - 默认以最宽节点或组为目标进行水平拉伸，按住`Alt`键时，则以最窄节点或组为目标
+- **垂直双侧拉伸** - 默认以最高节点或组为目标进行垂直拉伸，按住`Alt`键时，则以最矮节点或组为目标
 
-### 基础对齐
+选中单个节点组时
+  - 上下左右基础对齐操作将会把节点限制在该节点组内（需同时选中该节点组和组内的节点）
+  - 拉伸操作将会拉伸节点组边缘以贴合组内节点边缘（只需选中该节点组）
 
-- **左对齐** - 将所有选定节点对齐到最左边缘
-- **右对齐** - 将所有选定节点对齐到最右边缘
-- **顶部对齐** - 将所有选定节点对齐到顶部边缘
-- **底部对齐** - 将所有选定节点对齐到底部边缘
-- **水平等距分布** - 在左右方向上均匀排列节点：默认以最左侧节点为起点，按住Alt键则以最右侧节点为起点
-- **垂直等距分布** - 在上下方向上均匀排列节点：默认以最顶部节点为起点，按住Alt键则以最底部节点为起点
+### 高级取色器
+- **区域颜色** - 调整颜色明度、饱和度
+- **吸管工具** - 吸取屏幕颜色
+- **色相滑块** - 调整色相
+- **透明度滑块** - 调整颜色透明度
+- **颜色预设** - 没有选中节点时，点击Save，会将工作流中所有节点颜色保存到预设中，点击Apply，将预设中的颜色应用到对应节点。在选中节点的情况下，保存和应用按钮只对该节点有效
+- **删除预设** - 点击Clear，删除预设中的所有颜色。右键单击预设颜色列表中的任意颜色，可删除指定颜色。
 
-### 节点拉伸
+## 参数配置
+<div align="center">
+  <img src="https://moooonet.github.io/assets/Comfy-Align/images/newSetting.png" width="100%">
+</div>
 
-- **左拉伸** - 将节点拉伸到左边缘。如果已经左对齐，则调整右侧使宽度相等
-- **右拉伸** - 将节点拉伸到右边缘。如果已经右对齐，则调整左侧使宽度相等
-- **顶部拉伸** - 将节点拉伸到顶部边缘。如果已经顶部对齐，则调整底部使高度相等
-- **底部拉伸** - 将节点拉伸到底部边缘。如果已经底部对齐，则调整顶部使高度相等
-- **水平拉伸** - 将所有节点调整为相同宽度：默认使用最宽节点的宽度，按住Alt键则使用最窄节点的宽度
-- **垂直拉伸** - 将所有节点调整为相同高度：默认使用最高节点的高度，按住Alt键则使用最矮节点的高度
+- **颜色应用**
+  - **Apply color to node header** - 改变节点标题栏颜色 (默认勾选)
+  - **Apply color to node panel** - 改变节点面板颜色（按个人喜好勾选）
 
-### 颜色管理
+- **快捷键**
+  - **默认快捷键** - `Alt+A`
+  - **Hold Shortcut Mode** - 勾选后，按住快捷键显示面板，光标移到图标上，松开执行操作。也可以按住快捷键点击图标进行连续操作
+  - 推荐设置：如果勾选`Hold Shortcut Mode`，将快捷键改为`Tab`或`~`键，操作起来会更丝滑。
 
-颜色修改支持节点和节点组。插件包含预定义颜色: 
+- **间距设置**
+  - 节点水平间距 (Node Horizontal Spacing)
+  - 节点垂直间距 (Node Vertical Spacing)
+  - 节点组水平间距 (Group Horizontal Spacing)
+  - 节点组垂直间距 (Group Vertical Spacing)
 
-| 颜色 | Hex代码 | 描述 |
-|-------|----------|-------------|
-| 🔴 | #a93232 | 红色 |
-| 🟠 | #79461d | 橙色 | 
-| 🟡 | #6e6e1d | 黄色 |
-| 🟢 | #2b652b | 绿色 |
-| 🔵 | #248382 | 青色 |
-| 🔵 | #246283 | 蓝色 |
-| 🟣 | #3c3c83 | 紫色 |
-| ♟️ | - | 棋盘格（移除颜色） |
-| 🌙 | - | 月亮（用于自定义颜色） |
 
-### 节点操作
-
-- **节点绕过** - 切换节点的绕过模式，允许输入直接传递到输出而不处理节点内容
-- **节点静音** - 切换节点的静音模式，暂时禁用节点执行
-- **节点固定** - 固定节点位置，防止节点被对齐和拉伸操作移动
-
-### 高级操作技巧
-
-- **Shift键保持面板** - 按住Shift键时点击操作图标，可以保持十字面板显示，方便连续进行多项对齐或颜色操作
-- **Alt键修改器** - 按住Alt键时执行水平/垂直等距分布会改变对齐方向和参考点
-- **固定节点安全性** - 对齐和拉伸操作会自动跳过被固定的节点
-- **实用工具面板** - 通过月亮旁边的箭头图标可以展开/折叠实用工具面板
-
-## 配置
-
-如果您想修改快捷键以及垂直间距(Vertical Spacing)和水平间距配置(Horizontal Spacing)，可以在设置面板的Align中进行修改。
+---
 
 
 <div align="center">
-  <img src="https://moooonet.github.io/assets/Comfy-Align/images/setting.png" width="100%">
+   <a href="https://www.star-history.com/#Moooonet/ComfyUI-Align&Date">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Moooonet/ComfyUI-Align&type=Date&theme=dark" />
+      <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=Moooonet/ComfyUI-Align&type=Date" />
+      <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=Moooonet/ComfyUI-Align&type=Date" />
+    </picture>
+   </a>
 </div>
 
 
-如果您想修改预设颜色，可在`web\js\align.js`中找到如下部分进行修改：
-
-```javascript
-const CONFIG = {
-...
-  colors: {
-    circle1: '#83314a',  // 红色
-    circle2: '#79461d',  // 橙色
-    circle3: '#6e6e1d',  // 黄色
-    circle4: '#2b652b',  // 绿色
-    circle5: '#248382',  // 青色
-    circle6: '#246283',  // 蓝色
-    circle7: '#3c3c83',  // 紫色
-    ...
-  },
-};
-```
-
-## 赞赏
+---
 
 <div align="center">
-  <br>
-  <p><strong><i>赠人玫瑰，手留余香</i></strong></p>
-  <p>每一份支持都将直接转化为开源世界的进步，这些来自社区的温暖，既是对技术价值的认可，更构成了开源生态持续运转的底层燃料。</p>
-  <a href='https://ko-fi.com/M4M21CRQOTOT' target='_blank'><img height='32' style='border:0px;height:32px;' src='https://storage.ko-fi.com/cdn/kofi6.png?v=6' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
-  <a href='https://afdian.com/a/moooonet' target='_blank'><img height='32' style='border:0px;height:32px;' src='https://moooonet.github.io/assets/Comfy-Align/images/afdian.png' border='0' alt='AFDIAN' /></a>
+  <p>未经明确授权，严禁以任何形式进行集成、修改或再分发。</p>
+  <p>© 2025 Moooonet. All rights reserved.</p>
 </div>
-
-
-## Star History
-
-<a href="https://www.star-history.com/#Moooonet/ComfyUI-Align&Date">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Moooonet/ComfyUI-Align&type=Date&theme=dark" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=Moooonet/ComfyUI-Align&type=Date" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=Moooonet/ComfyUI-Align&type=Date" />
- </picture>
-</a>
