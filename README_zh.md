@@ -23,8 +23,8 @@ ComfyUI-Align提供了一套强大的节点对齐-拉伸-色彩配置工具，�
 <div align="left">
   <p>
     <span>视频教程：</span>
-    <a href="https://youtu.be/gQdG9p6dWg4">Youtube</a> |
-    <a href="https://www.bilibili.com/video/BV1brdWYbEGE">BiliBili</a>
+    <a href="https://youtu.be/p1niyxwsOes">Youtube</a> |
+    <a href="https://www.bilibili.com/video/BV1XJ53zuE2g">BiliBili</a>
   </p>
 </div>
 

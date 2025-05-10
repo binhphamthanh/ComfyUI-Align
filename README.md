@@ -23,8 +23,8 @@ However, you can still configure how colors are applied in the settings:
 <div align="left">
   <p>
     <span>Video tutorials:</span>
-    <a href="https://youtu.be/gQdG9p6dWg4">Youtube</a> |
-    <a href="https://www.bilibili.com/video/BV1brdWYbEGE">BiliBili</a>
+    <a href="https://youtu.be/p1niyxwsOes">Youtube</a> |
+    <a href="https://www.bilibili.com/video/BV1XJ53zuE2g">BiliBili</a>
   </p>
 </div>
 
