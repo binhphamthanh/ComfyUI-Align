@@ -5,4 +5,4 @@ images/
 .editorconfig
 .pre-commit-config.yaml
 MANIFEST.in
-default-color-preset.json
+config/default-color-preset.json
